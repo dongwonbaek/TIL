@@ -11,10 +11,14 @@
 
 
 
+
+
 ## **압축파일 저장과 클론의 차이점**
 
 - 압축버전(zip)은 최신버전의 파일만 가져옴
 - 클론은 버전(.git)까지 모두 가져옴
+
+
 
 
 
@@ -28,11 +32,15 @@ git pull origin master
 
 
 
+
+
 ### 브랜치 관련 명령어
 
 ***git branch***
 
 : branch **검색**
+
+
 
 
 
@@ -42,15 +50,21 @@ git pull origin master
 
 
 
+
+
 ***git checkout 브랜치이름***
 
 : 해당 branch로 **이동**
 
 
 
+
+
 ***git checkout -b 브랜치이름***
 
 : 브랜치 **생성하면서 이동**
+
+
 
 
 
@@ -64,6 +78,8 @@ git pull origin master
 
 
 
+
+
 ***git branch -d 브랜치이름***
 
 : 해당 브랜치 **삭제**
@@ -71,6 +87,8 @@ git pull origin master
 `브랜치 병합 후 삭제해도 master브랜치에 있는 파일은 삭제되지 않는다. `
 
 `그러므로 병합 후 무조건 삭제하는 편이 좋다.`
+
+
 
 
 
