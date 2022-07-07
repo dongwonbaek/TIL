@@ -68,7 +68,10 @@ CLI에서 활용할 수 있는 명령어
 
 
 - git init : 저장소 생성
-- git add 파일이름 : 해당파일을 staging area로 지정
+- git add 파일이름 : 해당파일을 stage
+- git add . : 변경된 파일 전부 stage
+- git restore --staged 파일이름 : 해당파일의 stage 상태 해제
+- git restore 파일이름 : 해당파일 복구
 - git commit -m '커밋메시지' : staging area로 지정된 파일을 커밋하고 메시지를 남김 (버전 생성)
 - git status : add 안된 파일 검색
 - git log : 현재 저장소에 기록된 커밋을 조회
