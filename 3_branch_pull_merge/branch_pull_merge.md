@@ -32,6 +32,14 @@ git pull origin master
 
 
 
+# .gitkeep 과 .gitignore
+
+.gitkeep : 빈 폴더를 만들기 위해 사용
+
+.gitignore : git이 추적하지 않는 파일 관리 `폴더명은 바꿀 수 없다`
+
+`.gitkeep 은 폴더명을 바꿔도 상관없지만 관용적인 표현이므로 origin, master, main 과 같이 바꾸지 않는 것이 좋다.`
+
 
 
 ### 브랜치 관련 명령어
@@ -97,7 +105,7 @@ git pull origin master
 
 
 1. 원하는 저장소 포크(fork)
-2. 포크된 저장소 클론url 따오기
+2. 포크된 저장소 클론url 따오기 (나의 Repository)
 3. 내 로컬 저장소에 클론 생성
 4. 브랜치 생성
 5. 수정 작업
