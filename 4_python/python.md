@@ -131,7 +131,7 @@ fruit = 'abcde'
 print(fruit[1])
 ```
 
-했을 때 b가 출력된다.
+b가 출력된다.
 
 
 
