@@ -315,6 +315,8 @@ value = num if num >= 0 else -num
 # 절대값 산출을 위한 코드
 ~~~
 
+
+
 # 반복문
 
 - while문
