@@ -256,3 +256,98 @@ print(students['1회차'])
   - 키와 값은 :로 구분되고 개별 요소는 ,로 구분
   - 변경 가능, 반복 가능
   - 키 삭제는 .pop()
+
+***
+
+
+
+# 조건문
+
+~~~python
+a = -10
+if a >= 0;
+	print('양수')
+else:
+    print('음수')
+print(a)
+~~~
+
+## 복수 조건문
+
+~~~python
+dust = 80
+if dust > 150:
+    print('매우 나쁨')
+elif dust > 80:
+    print('나쁨')
+elif dust > 30:
+    print('보통')
+else:
+    print('좋음')
+print('미세먼지 확인 완료')
+~~~
+
+## 중첩 조건문
+
+~~~python
+dust = -10
+if dust > 150:
+    print('매우 나쁨')
+    if dust > 300:
+        print('실외 활동을 자제하세요.')
+elif dust > 80:
+    print('나쁨')
+elif dust > 30:
+    print('보통')
+else:
+    if dust >= 0:
+        print('좋음')
+    else:
+        print('값이 잘못되었습니다.')
+~~~
+
+## 조건 표현식
+
+~~~python
+value = num if num >= 0 else -num
+# value에 num을 대입한다, num이 0보다 크거나 같다면.
+# num이 0보다 크거나 같지 않다면, value에 -num을 대입한다.
+# 절대값 산출을 위한 코드
+~~~
+
+# 반복문
+
+- while문
+
+  ~~~python
+  while <expression>:
+      # Code block
+  ~~~
+
+  - 조건이 참인 경우 들여쓰기 되어 있는 코드 블록이 실행.
+  - 코드 블록이 모두 실행되고, 다시 조건식을 검사하며 반복적으로 실행.
+  - 무한 동작을 하지 않도록 종료조건이 필요.
+
+  
+
+- for문
+
+  ~~~python
+  for <변수명> in <iterable>:
+      # Code block
+  ~~~
+
+  - for문은 시퀀스(string, tuple, list, range)를 포함한 순회가능한 객체(iterable)요소를 모두 순회함
+  - 처음부터 끝까지 모두 순회하므로 별도의 종료조건이 필요하지 않음
+  - 딕셔너리 순회
+    - 딕셔너리는 기본적으로 key를 순회하며, key를 통해 값을 활용
+
+## 반복문 제어
+
+- break
+  - 반복문을 종료
+- continue
+  - continue 이후의 코드 블록은 수행하지 않고, 다음 반복을 수행
+- for-else
+  - 끝까지 반복문을 실행한 이후에 else문 실행
+  - break를 통해 중간에 종료되는 경우 else 문은 실행되지 않음
