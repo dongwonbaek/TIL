@@ -319,7 +319,7 @@ value = num if num >= 0 else -num
 
 # 반복문
 
-- while문
+- **while문**
 
   ~~~python
   while <expression>:
@@ -332,7 +332,7 @@ value = num if num >= 0 else -num
 
   
 
-- for문
+- **for문**
 
   ~~~python
   for <변수명> in <iterable>:
@@ -346,10 +346,143 @@ value = num if num >= 0 else -num
 
 ## 반복문 제어
 
-- break
+- **break**
+  
   - 반복문을 종료
-- continue
+  
+- **continue**
+  
   - continue 이후의 코드 블록은 수행하지 않고, 다음 반복을 수행
-- for-else
+  
+- **for-else**
+  
   - 끝까지 반복문을 실행한 이후에 else문 실행
   - break를 통해 중간에 종료되는 경우 else 문은 실행되지 않음
+  
+  
+
+***
+
+
+
+# 함수✔
+
+- 함수의 선언은 **def** 키워드를 활용함
+- 들여쓰기를 통해 Function body(실행될 코드 블록)를 작성함
+- 함수는 parameter를 넘겨줄 수 있음
+  - parameter : 함수를 실행할 때, 함수 내부에서 사용되는 식별자
+  - argument : 함수를 호출할 때, 넣어주는 값
+- 함수는 동작 후에 return을 통해 결과값을 전달함
+- 함수는 함수명()으로 호출
+- 함수는 반드시 값을 하나만 return 하고 return과 동시에 실행이 종료됨.
+
+
+
+**함수의 결과값은 항상 하나이지만 예외가 있다.**
+
+~~~python
+def minus_and_product(x, y):
+    return x - y, x * y
+print(minus_and_product(x, y))
+# (-1, 20) << 함수의 return 값이 콤마로 구분된 2개의 값이면 두 값을 묶어 튜플로 반환된다.
+~~~
+
+
+
+### Argument
+
+- 함수 호출 시 함수의 parameter를 통해 전달되는 값
+- Argument는 소괄호 안에 할당 func_name(argument)
+- 필수 Argument : 반드시 전달되어야 하는 argument
+- 선택 Argument : 값을 전달하지 않아도 되는 경우는 기본 값이 전달
+
+
+
+#### Positional arguments
+
+- 기본적으로 함수 호출 시 Argument는 위치에 따라 함수 내에 전달됨
+
+~~~python
+def add(x, y):
+    return x + y
+print(add(2, 3)) # 자동으로 위치에 따라, x에 2를 대입, y에 3을 대입
+~~~
+
+
+
+#### Keyword arguments
+
+- 직접 변수의 이름으로 특정 Argument를 전달할 수 있음
+- Keyword Argument 다음에 Positional Argument를 활용할 수 없음
+
+~~~python
+def add(x, y):
+    return x + y
+add(x=2, y=5)	# 가능
+add(2, y=5)		# 가능
+add(x=2, 5)		# 불가능, Keyword Argument(x=2)가 먼저 제시되었으므로. 
+~~~
+
+
+
+#### 정해지지 않은 개수의 arguments
+
+- 여러 개의 Positional Argument를 하나의 필수 parameter로 받아서 사용
+  - 몇 개의 Positional Argument를 받을지 모르는 함수를 정의할 때 유용
+- Argument들은 튜플로 묶여서 처리되며, parameter에 *를 붙여 표현
+
+~~~python
+def add(*args):
+    for arg in args:
+    print(arg)
+# add(2)
+# add(2, 3, 4, 5) 등 다양한 상황에서 활용할 수 있다.
+~~~
+
+
+
+#### 정해지지 않은 개수의 keyword arguments
+
+- 함수가 임의의 개수 Argument를 Keyword Argument로 호출될 수 있도록 지정
+- Argument들은 딕셔너리로 묶여 처리되며, parameter에 **를 붙여 표현
+
+~~~python
+def family(**kwargs):
+    for key, value in kwargs:
+        print(key, ":", value)
+family(father='John', mother='Jane', me='John Jr.')
+~~~
+
+
+
+#### 객체 수명주기
+
+객체는 각자의 수명주기가 존재
+
+- built-in scope : 파이썬이 실행된 이후부터 영원히 유지
+- global scope : 모듈이 호출된 시점 이후 혹은 인터프리터가 끝날 때 까지 유지
+- local scope : 함수가 호출될 때 생성되고, 함수가 종료될 때까지 유지
+
+
+
+### 내장 함수 응용(map)
+
+map(function, iterable)
+
+- 순회가능한 데이터구조의 모든 요소에 함수를 적용하고, 그 결과를 map object로 반환
+- 단 결과값은 map object로 반환되기 때문에 형변환을 통하여 원하는 모습으로 확인할 수 있음
+
+~~~python
+ n, m = map(int, input().split())
+~~~
+
+~~~python
+numbers = [1, 2, 3]
+result = map(str, numbers)
+print(list(result))
+#['1', '2', '3']
+~~~
+
+
+
+![img](python.assets/unknown.png)
