@@ -695,3 +695,8 @@ key가 딕셔너리에 있으면 제거하고 해당 값을 반환. 없으면 de
 **.value()** 
 
 value만 리스트로 출력
+
+import json 다른 json파일의 내용물을 현재 파일로 가져올 때 사용한다.
+import pprint `print() 대신 pprint()를 사용하면, 결과문을 이쁘게 정렬한다.
+f = open('파일명.json', 'r', encoding = 'utf-8') 파일명.json 이라는 파일 내용을 읽기 전용으로 연다.
+변수 = json.load(f) 변수에 f에 열린 파일내용을 할당한다. 변수에 할당된 내용은 파일명.json 내용과 동일하다.
