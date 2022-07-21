@@ -8,3 +8,5 @@
 - **[깃헙을 통한 협업과정](./3_branch_pull_merge/branch_pull_merge.md)**
 - **[Python](./4_python/python.md)**
 - **[Python Codeup 문제풀이](./python_codeup/codeup/)**
+
+- **[Python SWEA 문제풀이](./4_python/python_swea/)**
