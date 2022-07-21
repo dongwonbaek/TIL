@@ -761,3 +761,93 @@ class MyClass:
 # 변수를 정의할 때는 소문자만 쓰는 것이 일반적이다.(snake_case)
 ~~~
 
+
+
+```python
+class Person:
+    
+    # 사람이라면 이름을 가지고 있다.
+    # 인스턴스를 만들 때는 이름 정보를 받아서 하고 싶다.
+    
+    def __init__(self, name):
+        # 개별 인스턴스에 각각 name 속성을 지정
+        self.name = name
+	
+    # self : 호출하는 인스턴스를 파이썬 내부적으로 전달해줌
+    def greeting(self):
+        print(f'안녕하세요, {self.name}입니다.')
+        
+jimin = Person('지민')
+print(jimin.name)	# 지민
+jimin.greeting() # Person.greeting(jimin)
+
+iu = Person('지은')
+print(iu.name)
+iu.greeting()
+```
+
+
+
+### 인스턴스와 클래스 간의 이름공간
+
+- 클래스를 정의하면, 클래스와 해당하는 이름공간 생성
+
+- 인스턴스를 만들면, 인스턴스 객체가 생성되고 이름공간 생성
+
+- 인스턴스에서 특정 속성에 접근하면, 인스턴스-클래스 순으로 탐색
+
+
+
+**클래스 메소드**
+
+클래스가 사용할 메소드
+
+@classmethod 데코레이터를 사용하여 정의
+
+- 데코레이터: 함수를 어떤 함수로 꾸며서 새로운 기능을 부여
+
+호출 시, 첫번째 인자로 클래스(cls)가 전달됨
+
+
+
+**스태틱 메소드**
+
+인스턴스 변수, 클래스 변수를 전혀 다루지 않는 메소드
+
+속성을 다루지 않고 단지 기능만을 하는 메소드를 정의할 때, 사용
+
+@staticmethod 데코레이터를 사용하여 정의
+
+호출시 어떤 정의도 전달되지 않음
+
+
+
+```python
+class MyClass:
+    class_variable = '클래스변수'
+    
+    #메서드들을 정의했습니다.
+    def __init__(self):
+        self.instance_variable = '인스턴스 변수'
+    
+    # 인스턴스 메서드 정의
+    def instance_method(self):
+        return self, self.instance_variable
+    
+    # 클래스 메서드 정의 / 클래스 내에 클래스를 정의할 때
+    @classmethod # 데코레이터: 함수를 꾸며주는 것인데 지금은 고민하지 말기.
+    def class_method(cls):
+        return cls, cls.class_variable
+    
+    # 스태틱 메서드 정의 / 클래스 내에 클래스나 인스턴스가 필요없는 메서드가 필요할 때
+    @staticmethod # 데코레이터
+    def static_method():
+        return '스태틱'
+    
+c1 = MyClass()
+print('인스턴스 변수 호출', c1.instance_variable)
+print('인스턴스 메서드 호출', c1.instance_method())
+print('클래스 메서드 호출', c1.class_method())
+print('스태틱 메서드 호출', c1.static_method())
+```
+
