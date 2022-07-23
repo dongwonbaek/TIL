@@ -851,3 +851,53 @@ print('클래스 메서드 호출', c1.class_method())
 print('스태틱 메서드 호출', c1.static_method())
 ```
 
+
+
+# 다양한 응용 문법📖
+
+### lambda
+
+#### lambda[parameter] : 표현식
+
+- 람다함수
+
+  : 표현식을 계산한 결과값을 반환하는 함수로, 이름이 없는 함수여서 익명함수라고도 불림
+
+- 특징
+  - return문을 가질 수 없음
+  - 간편 조건문 외 조건문이나 반복문을 가질 수 없음
+- 장점
+  - 함수를 정의해서 사용하는 것보다 간결하게 사용 가능
+  - def를 사용할 수 없는 곳에서도 사용가능
+
+
+
+## 파이썬 패키지 관리자(pip)
+
+PyPI 에 저장된 외부 패키지들을 설치하도록 도와주는 패키지 관리시스템
+
+패키지 설치 명령어
+
+```bash
+$ pip install SomePackage
+# 패키지 설치
+
+$ pip install SomePackage==1.0.5
+$ pip install 'SomePackage>=1.0.4'
+# 패키지 특정 버전 설치
+
+$ pip uninstall SomePackage
+# 패키지 삭제
+
+$ pip list
+# 설치되어 있는 패키지 목록 출력
+
+$ pip freeze
+# 설치된 패키지 목록을 pip install 로 활용할 수 있는 형식으로 출력하여
+# requirements.txt 폴더에 저장하여 개발자들끼리 공유할 때 사용한다.
+# 일반적으로 패키지를 기록하는 파일의 이름은 requirements.txt로 정의함(관습)
+
+$ pip install -r requirements.txt
+# requirements.txt에 기록되어있는 패키지 목록들을 그대로 설치한다.
+```
+
