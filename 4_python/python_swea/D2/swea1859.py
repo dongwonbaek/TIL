@@ -16,3 +16,4 @@ for _ in range(1, 1 + T):
                 sum_final += sum_[c] * (c + 1)
             sum_ = []
     print(f'#{_} {sum_final}')
+    # 오답입니다. 런타임 에러 발생. 시간복잡도를 줄여야 함.
