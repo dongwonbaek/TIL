@@ -123,3 +123,72 @@ print(queue)
 # deque([2, 3, 4, 5, 6])
 ~~~
 
+
+
+# 힙(Heap)
+
+
+
+우선순위 큐는 우선순위를 기준으로 가장 우선순위가 높은 데이터가 가장 먼저 나가는 방식
+
+우선순위 큐를 구현하는 방법
+
+1. 배열
+2. 연결 리스트
+3. 힙
+
+
+
+**힙의 특징**
+
+- 최대값 또는 최소값을 빠르게 찾아내도록 만들어진 데이터구조
+
+- 완전 이진 트리의 형태로 느슨한 정렬 상태를 지속적으로 유지한다.
+
+- 힙 트리에서는 중복값을 허용한다.
+
+
+
+힙은 언제 사용해야할까?
+
+1. 데이터가 지속적으로 정렬되야 하는 경우 (느슨한 정렬)
+2. 데이터에 삽입/삭제가 빈번할 때
+
+
+
+파이썬의 heapq 모듈
+
+Minheap(최소 힙)으로 구현되어 있음(가장 작은 값이 먼저 옴) Maxheap도 가능(가장 큰 값이 먼저 옴)
+
+삽입, 삭제, 수정, 조회 연산의 속도가 리스트보다 빠르다.
+
+heapq.heappop()
+
+heapq.heappush()
+
+
+
+~~~python
+import heapq # 힙 구현
+
+numbers = [5, 3, 2, 4, 1]
+heapq.heapify(numbers) # numbers 자체가 바뀌어 버린다. 최솟값을 맨 앞으로 느슨한 정렬
+print(numbers)
+# [1, 3, 2, 4, 5]
+
+heapq.heappop(numbers) # 첫번째 값을 뽑아내고 또 다시 가장 작은 값을 첫번째로 이동
+print(numbers)
+# [2, 3, 4, 5]
+
+heapq.heappop(numbers)
+print(numbers)
+# [3, 4, 5]
+
+heapq.heappush(numbers, 10)
+print(numbers)
+# [3, 5, 6, 10]
+
+heapq.heappush(numbers, 0) # 가장 최솟값을 넣는 순간 정렬하여 맨앞으로 이동한다.
+print(numbers)
+# [0, 3, 5, 6, 10]
+~~~
