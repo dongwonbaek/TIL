@@ -191,4 +191,73 @@ print(numbers)
 heapq.heappush(numbers, 0) # 가장 최솟값을 넣는 순간 정렬하여 맨앞으로 이동한다.
 print(numbers)
 # [0, 3, 5, 6, 10]
+
+heapq.heappush(numbers, [-1, 1]) # 리스트도 넣을 수 있다.
+print(numbers)
+# [[-1, 1], 0, 3, 5, 6, 10] # 리스트 내 가장 작은 수를 비교하여 배치한다.
 ~~~
+
+
+
+# 이차원 리스트
+
+
+
+이차원 리스트는 리스트를 원소로 가지는 리스트일 뿐이다.
+
+
+
+**✔tip** 
+
+~~~python
+print([0] * 2) # 리스트의 곱 연산이 가능한 파이썬!
+# [0, 0]
+~~~
+
+
+
+**특정 값으로 초기화 된 이차원 리스트 만들기**
+
+~~~python
+n = 4	# 행
+m = 3	# 열
+matrix = []
+for _ in range(n):
+    matrix.append([0] * m)
+   
+print(matrix)
+# [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+~~~
+
+
+
+~~~python
+n = 5
+m = 5
+matrix1 = [[0] * m for _ range(n)]
+matrix2 = [[0] * m ] * n
+# matrix1 과 2는 같은 결과 값을 보여준다.
+# 하지만 같은 방식으로 만들어졌을까? X
+# 1은 각 원소리스트들의 주소값이 전부 다르지만
+# 2는 주소값이 전부 같다. 사용법이 다르겠지만 matrix2의 방식은 잘 쓰이지 않는다.
+~~~
+
+
+
+행렬의 크기가 미리 주어지는 경우
+
+~~~python
+# 3 * 3 크기의 입력을 받아보자.
+# 1 2 3
+# 4 5 6
+# 7 8 9
+matrix = []
+for _ in range(3):
+    line = list(map(int, input().split()))
+    matrix.append(line)
+# n * m 크기의 입력을 list comprehension 으로 작성하기
+n, m = map(int, input().split())
+matrix = [list(map(int, input().split())) for _ in range(n)]
+print(matrix)
+~~~
+
