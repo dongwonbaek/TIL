@@ -261,3 +261,56 @@ matrix = [list(map(int, input().split())) for _ in range(n)]
 print(matrix)
 ~~~
 
+
+
+# 순회
+
+이중 for문을 이용한 행 우선 순회
+
+~~~python
+matrix = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 0, 1, 2]
+]
+
+for i in range(3):
+    for j in range(4):
+        print(matrix[i][j], end = ' ')
+    print()
+# 1 2 3 4
+# 5 6 7 8
+# 9 0 1 2
+~~~
+
+ 
+
+이중 for 문을 이용한 열 우선 순회
+
+~~~python
+matrix = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 0, 1, 2]
+]
+
+for i in range(4):
+    for j in range(3):
+        print(matrix[j][i], end = ' ')
+    print()
+# 1 5 9
+# 2 6 0
+# 3 7 1
+# 4 8 2
+~~~
+
+
+
+### 전치
+
+전치란 행렬의 행과 열을 서로 맞바꾸는 것을 의미한다. 위의 방법들을 사용하면 된다.
+
+
+
+### 회전
+
