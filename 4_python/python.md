@@ -1,3 +1,5 @@
+
+
 # 파이썬(Python)✔
 
 - 다른 프로그래밍 언어보다 문법이 간단하면서도 엄격하지 않음
@@ -903,4 +905,17 @@ $ pip freeze
 $ pip install -r requirements.txt
 # requirements.txt에 기록되어있는 패키지 목록들을 그대로 설치한다.
 ```
+
+
+
+
+
+### 입력값을 외부 파일에서 끌어오기
+
+~~~python
+import sys
+sys.stdin = open('input.txt')
+
+# 같은 폴더 내의 파일만 가능
+~~~
 
