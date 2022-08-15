@@ -1,25 +1,12 @@
 import sys
 sys.stdin = open('swea1948.txt')
-n = int(input())
-m = int(input())
-matrix = [[] for _ in range(n + 1)]
-check = [0] * (n + 1)
-distances = [0] * (n + 1)
-for _ in range(m):
-    x, y, z = map(int, sys.stdin.readline().split())
-    matrix[x].append((y, z))
-start, arrive = map(int, input().split())
-check[start] += 1
 
-stack = [(start, 0)]
-while len(stack) != 0:
-    cur = stack.pop()
-    for a in matrix[cur[0]]:   
-        stack.append(a)
-        if check[a[0]] < check[cur[0]] + 1:
-            check[a[0]] = check[cur[0]] + 1
-        if distances[a[0]] < distances[cur[0]] + a[1]:
-            distances[a[0]] = distances[cur[0]] + a[1]
-
-print(distances[arrive])
-print(check[arrive])    
+years = [(0, 0), (1, 31), (2, 28), (3, 31), (4, 30), (5, 31), (6, 30), (7, 31), (8, 31), (9, 30), (10, 31), (11, 30), (12, 31)]
+T = int(input())
+for _ in range(1, T + 1):
+    result = 0
+    days = list(map(int, input().split()))
+    for a in range(days[0], days[2]):
+        result += years[a][1]
+    result += (days[3] - days[1] + 1)
+    print(f'#{_} {result}')
