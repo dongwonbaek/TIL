@@ -67,7 +67,8 @@ SQL (Structured Qurery Language)
 CREATE TABLE classmates (
 id INTEGER PRIMARY KEY,
 name TEXT,
-age INT,
+age INT DEFAULT 1 CHECK (0 < age)
+-- 기본값은 1이되, 0보다 큰 값으로만 구성되어야 한다.
 address TEXT
 );
 ~~~
@@ -124,6 +125,7 @@ CREATE classmates(
 name TEXT,
 age INTEGER,
 address TEXT DEFAULT '대한민국'
+-- DEFAULT 뒤 숫자나 문자는 기본값으로 설정되는 값이다.
 );
 
 INSERT INTO classmates (name, age) VALUES ('홍길동', 23);
@@ -173,7 +175,7 @@ SELECT rowid, name FROM classmates LIMIT 1;
 
 SELECT rowid, name FROM classmates LIMIT 1 OFFSET 2;
 -- 3번쨰 id를 조회,
--- OFFSET 뒤 숫자는 그만큼 건너뛴 값을 조회한다는 뜻이다.
+-- OFFSET 뒤 숫자는 그만큼 건너뛴 값을 조회한다는 뜻
 
 SELECT * FROM classmates WHERE address='서울';
 -- 주소가 서울인 사람들을 조회
