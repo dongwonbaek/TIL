@@ -61,6 +61,18 @@ SQL (Structured Qurery Language)
 
 
 
+**sqlite 명령어**
+
+~~~sqlite
+.mode csv -- csv파일을 테이블로 가져올 수 있는 모드 실행
+.import hellodb.csv examples -- hellodb.csv 라는 파일을 examples이라는 이름의 테이블로 생성
+.tables -- 현재 존재하는 테이블 검색
+.headers on -- 데이터 출력시 열 이름을 위에 같이 출력
+.mode column -- 열 이름 출력시 데이터와 --으로 구분지음
+~~~
+
+
+
 데이터베이스 생성 및 스키마 정의
 
 ~~~sqlite
