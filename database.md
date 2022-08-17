@@ -61,7 +61,7 @@ SQL (Structured Qurery Language)
 
 
 
-**sqlite 명령어**
+**sqlite3 명령어**
 
 ~~~sqlite
 .mode csv -- csv파일을 테이블로 가져올 수 있는 모드 실행
@@ -212,5 +212,91 @@ DELETE FROM classmates WHERE rowid = 5;
 ~~~SQLITE
 UPDATE classmates SET address='서울' WHERE rowid=5
 -- 어떻게 변경할 것인지를 SET 뒤에, 무엇을 변경할 것인지를 WHERE 뒤에 선언한다.
+~~~
+
+
+
+**WHERE 절에서 사용할 수 있는 연산자**
+
+**=**, !=, ^=, <>,  >, >=, <, <=, AND, OR, NOT
+
+`SQL에서의 = 는 파이썬의 == 와 같다. != ^= <> 는 모두 같은 뜻이다.`
+
+- BETWEEN 값1 AND 값2
+  - 값1과 값2 사이의 비교 (값1 <= 비교값 <= 값2)
+- IN (값1, 값2, ..)
+  - 목록 중에 값이 하나라도 일치하면 성공
+
+
+
+**연산자 우선순위**
+
+1. 괄호()
+2. NOT
+3. 비교연산자, SQL
+4. AND
+5. OR
+
+
+
+**CSV 파일로 테이블 만들기**
+
+1. CREATE 로 테이블 생성 및 스키마 작성
+
+2. 데이터를 추가
+   ​	.mode csv
+
+3. 같은 디렉토리에 있는 users.csv 파일을 users 테이블로
+
+   ​	.import users.csv users
+
+
+
+### **Aggregate function(집계 함수)**
+
+- 값 집합에 대한 계산을 수행하고 단일 값을 반환
+- 여러 행으로부터 하나의 결괏값을 반환하는 함수
+- SELECT문에서만 사용됨
+  - COUNT() : 항목 개수
+  - AVG() : 평균
+  - MAX() : 최대값
+  - MIN() : 최소값
+  - SUM() : 합
+
+
+
+**LIKE**
+
+- 패턴 일치를 기반으로 데이터를 조회하는 방법 ( ex. LIKE '김%' )
+- wildcards 종류
+  - **%**: 0개 이상의 문자 (이자리에 문자가 있을 수도 있고 없을 수도 있다.)
+  - **_** : 임의의 단일 문자 (이자리에 반드시 한개의 문자가 있어야 한다.
+- 사용예시
+  - LIKE ' 2\_%\_%' : 2로 시작하고 적어도 3자리인 값
+
+
+
+**ORDER BY**
+
+- 조회 결과 집합을 정렬
+- SELECT 문에 추가하여 사용
+- 정렬 순서를 위한 2개의 KEYWORD 제공
+  - ASC - 오름차순(default)
+  - DESC - 내림차순
+- 사용예시
+
+~~~sqlite
+-- 나이 오름차순 정렬 후 상위 10명 조회
+SELECT first_name FROM users ORDER BY age ASC LIMIT 10;
+
+-- 나이, 성 순으로 오름차순 정렬 후 상위 10명 조회
+SELECT first_name FROM users ORDER BY age, last_name LIMIT 10;
+-- 정렬은 오름차순이 기본으로 설정되어있기 때문에 정렬방식을 선택하지 않으면 자동으로 오름차순(ASC)이 된다.
+
+-- 계좌 잔액 순 내림차순
+SELECT last_name, first_name, balance FROM users ORDER BY balance DESC LIMIT 10;
+
+-- 계좌 잔액 내림차순(높은 -> 낮은 것), 성 오름차순(ㄱ->ㅎ)
+SELECT last_name, first_name, balance FROM users ORDER BY balance DESC, last_name ASC LIMIT 10;
 ~~~
 
