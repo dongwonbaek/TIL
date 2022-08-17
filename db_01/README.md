@@ -164,3 +164,12 @@ COUNT(*)
 --------
 87712
 ```
+
+### 흡연 음주를 하는 사람 중에 혈압이 200 초과인 사람들의 정보를 모두 출력
+```sql
+SELECT * FROM healthcare WHERE smoking > 1 and is_drinking > 0 and blood_pressure > 200 and blood_pressure LIKE '_%';
+```
+```sql
+-- 데이터들 중 blodd_pressure 칼럼에 공백값이 있음.
+-- 유효한 값들 중에 조회를 해야하기 떄문에 LIKE '_%' 조건 사용
+```
