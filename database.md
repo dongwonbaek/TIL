@@ -300,3 +300,116 @@ SELECT last_name, first_name, balance FROM users ORDER BY balance DESC LIMIT 10;
 SELECT last_name, first_name, balance FROM users ORDER BY balance DESC, last_name ASC LIMIT 10;
 ~~~
 
+
+
+## 기본함수와 연산
+
+
+
+### 문자열 함수
+
+- SUBSTR(문자열, start, length): 문자열 자르기
+  - 시작 인덱스는 1, 마지막 인덱스는 -1
+- TRIM(문자열), LTRIM(문자열), RTRIM(문자열): 문자열 공백 제거
+- LENGTH(문자열): 문자열 길이
+- REPLACE(문자열, 패턴, 변경값): 패턴에 일치하는 부분을 변경
+- UPPER(문자열), LOWER(문자열): 대소문자 변경
+- ||: 문자열 합치기(concatenation)
+- 사용예시
+
+~~~sqlite
+SELECT last_name||first_name 이름 FROM users LIMIT 5;
+-- AS는 생략하고 띄어쓰기만 해도 된다.
+
+SELECT LENGTH(first_name) 이름길이, first_name FROM users LIMIT 5;
+
+SELECT REPLACE(phone,'-', '') FROM users LIMIT 5;
+~~~
+
+
+
+### 숫자 함수
+
+- ABS(숫자): 절대 값
+- SIGN(숫자): 부호 (양수 1, 음수 -1, 0 0)
+- MOD(숫자1, 숫자2): 숫자1을 숫자2로 나눈 나머지
+- CEIL(숫자): 올림
+- FLOOR(숫자): 내림
+- ROUND(숫자): 반올림
+- 산술연산자: + - / * 전부 사용가능
+- SQRT(숫자): 숫자의 제곱근
+- POWER(숫자1, 숫자 2): 숫자1 ^ 숫자2
+
+
+
+### GROUP BY
+
+- SELECT 문의 optional 절
+
+- 행 집합에서 요약 행 집합을 만듦
+
+- 선택된 행 그룹을 하나 이상의 열 값으로 요약 행으로 만듦
+
+- 반드시 WHERE절 뒤에서 사용
+
+- **집계함수와 활용하였을 때 의미가 있음**
+
+- **그룹화된 각각의 그룹이 하나의 집합으로 집계함수의 인수로 넘겨짐**
+
+- **GROUP BY 에서 활용하는 컬럼을 제외하고 집계함수를 써야 함. (집계함수 외 컬럼은 의미가 없음)**
+
+- **GROUP BY는 결과가 정렬되지 않지만 기존 순서와는 다르게 바뀜**
+
+  **그러므로 정렬해서 보고 싶다면 ORDER BY를 사용해야 함**
+
+~~~SQLITE
+SELCT AVG(나이) FROM users;
+
+SELECT AVG(나이) FROM users GROUP BY 성;
+-- 성씨 별로 평균나이를 출력
+
+SELECT last_name, COUNT(*) FROM users GROUP BY last_name;
+-- 성씨 별로 몇명있는지 출력
+
+SELECT last_name, COUNT(last_name)
+FROM users
+GROUP BY last_name
+HAVING COUNT(last_name) > 100;
+-- 조건에 따른 GROUP 하려면 HAVING을 쓴다.
+~~~
+
+
+
+### SELECT 문장 실행 순서 ✔
+
+FROM => WHERE => GROUP BY => HAVING => SELECT => ORDER BY => LIMIT/OFFSET
+
+테이블을 대상으로 제약조건에 맞춰서 뽑아서 그룹화한다. 
+
+그룹 중에 조건과 맞는 것 만을 조회하여 정렬하고 특정 위치의 값을 가져온다.
+
+
+
+### ALTER TABLE
+
+~~~sqlite
+-- 1. 테이블 이름 변경
+ALTER TABLE table_name 
+RENAME TO new_name;
+
+-- 2. 새로운 컬럼 추가 및 자료형 설정
+ALTER TABLE table_name
+ADD COLUMN column_definition TEXT DEFAULT 'hello';
+-- 새로운 컬럼 추가시 자료형으로 NOT NULL을 지정할 수 없다.
+-- 새롭게 생기는 컬럼 내에는 자료가 존재하지 않아 NULL상태로 생성되는데 
+-- 이는 NOT NULL자료형에 해당할 수 없기 떄문이다.
+
+-- 3. 컬럼 이름 수정
+ALTER TABLE table_name
+RENAME COLUMN current_name TO new_name;
+
+-- 4. 컬럼 삭제
+ALTER TABLE table_name
+DROP COLUMN column_name;
+~~~
+
