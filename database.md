@@ -1,4 +1,15 @@
+
+
 # 데이터베이스
+
+
+
+~~~
+팁박스 (실습진행하며 깨달았던 것들)
+- WHERE 문에서 NULL값을 조건으로 탐색할때 등호 ( = )를 사용해서 비교하면 안된다. IS NULL 이나 IS NOT NULL을 사용해야함.
+- 정렬기준(ORDER BY문)이 여러개일 경우 콤마를 사용해 구분하고, 각 조건마다 오름차순, 내림차순 여부를 붙혀야 함.
+- strftime(%Y, 칼럼명) 은 칼럼이 날짜형식일 경우 년도를 출력한다. %m 은 월, %d 는 일을 출력하고 함께 출력도 가능하다. SELECT, WHERE 뒤에 사용가능
+~~~
 
 
 
@@ -411,5 +422,109 @@ RENAME COLUMN current_name TO new_name;
 -- 4. 컬럼 삭제
 ALTER TABLE table_name
 DROP COLUMN column_name;
+~~~
+
+---
+
+### CASE
+
+- SELECT 바로 뒤에서 사용됨
+- CASE 문은 특정 상황에서 데이터를 변환하여 활용할 수 있음
+- ELSE를 생략하는 경우 NULL값이 지정됨
+
+~~~sql
+SELECT
+	id,
+    CASE
+        WHEN gender = 1 THEN '남성'
+        WHEN gender = 2 THEN '여성'
+        ELSE '중성'
+    END AS 성별
+FROM healthcare
+LIMIT 5;
+~~~
+
+---
+
+### 단일행 서브쿼리
+
+- WHERE 에서의 활용
+
+~~~SQL
+SELECT COUNT(*)
+FROM users
+WHERE age = (SELECT MIN(age) FROM users):
+-- 쿼리 내 서브쿼리를 사용할 수 있다. 서브 쿼리는 ()괄호로 묶어주자.
+
+-- 계좌잔고가 평균보다 높은 사람 수는?
+SELECT COUNT(*)
+FROM users
+WHERE balance > (SELECT AVG(balance) FROM users):
+
+-- users에서 유은정과 같은 지역에 사는 사람의 수는?
+SELECT COUNT(*)
+FROM users
+WHERE sido = (SELECT sido FROM users WHERE first_name = 은정 AND last_name = 유);
+~~~
+
+- SELECT 에서의 활용
+
+~~~sql
+-- 전체인원과 평균 연봉, 평균 나이를 출력하세요.
+SELECT COUNT(*) 전체인원수, AVG(연봉), AVG(age)
+FROM users;
+-- 서브쿼리 활용
+SELECT
+(SELECT COUNT(*) FROM users) AS 총인원,
+(SELECT AVG(balance) FROM users) AS 평균연봉
+(SELECT AVG(age) FROM users) AS 평균나이
+FROM users;
+~~~
+
+- UPDATE 에서의 활용
+
+~~~sql
+UPDATE users
+SET balance = (SELECT AVG(balance) FROM users):
+~~~
+
+
+
+다중행 서브쿼리
+
+- 서브쿼리 결과가 2개 이상인 경우
+- 다중행 비교 연산자와 함께 사용 (in, exists등)
+
+
+
+다중칼럼 서브쿼리
+
+~~~sql
+-- 특정 성씨에서 가장 어린 사람들의 이름과 나이
+SELECT last_name||first_name 이름, age 나이 
+FROM users 
+WHERE (last_name, age) 
+	IN (
+    	SELECT last_name, MIN(age) 
+   	 	FROM users
+   	 	GROUP BY last_name) 
+ORDER BY last_name;
+~~~
+
+
+
+유저와 게시글	N : 1
+
+게시글과 댓글	1 : N
+
+유저와 좋아요	N : N
+
+유저와 프로필	1 : 1
+
+~~~sql
+-- AC/DC 가 만든 앨범 제목 모두 출력
+SELECT Title 
+FROM albums 
+WHERE ArtistsID = (SELECT ArtistsID FROM artists WHERE Name = 'AC/DC');
 ~~~
 
