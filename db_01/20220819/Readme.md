@@ -203,6 +203,7 @@ Iron Maiden
 
 ### 17. 장르(genres) 테이블에서 음악(tracks)의 개수가 가장 적은 장르의 `Name`을 출력하세요.
 | genres 테이블과 tracks 테이블의 `GenreId` 활용하세요.
+
 ```sql 
 SELECT Name FROM genres WHERE GenreId = (SELECT GenreId FROM tracks GROUP BY GenreId ORDER BY COUNT(*) DESC LIMIT 1);
 
