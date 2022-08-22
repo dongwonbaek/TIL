@@ -528,3 +528,43 @@ FROM albums
 WHERE ArtistsID = (SELECT ArtistsID FROM artists WHERE Name = 'AC/DC');
 ~~~
 
+___
+
+
+
+### JOIN
+
+- 관계형 데이터베이스의 가장 큰 장점이자 핵심적인 기능
+- 일반적으로 데이터베이스에는 하나의 테이블에 많은 데이터를 저장하는 것이 아니라 여러 테이블로 나눠 저장하게 되며, 여러 테이블을 결합하여 출력하여 활용
+- 일반적으로 레코드는 기본키나 외래키 값의 관계에 의해 결합함
+
+
+
+**대표적인 JOIN**
+
+- INNER JOIN: 두 테이블에 모두 일치하는 행만 반환
+
+  - ```sql 
+    SELECT * FROM users JOIN role ON users.role_id = role.id;
+    
+    SELECT * FROM users JOIN role ON users.role_id = role.id ORDER BY users.name DESC;
+    -- 조인한 테이블에서 조건이나 정렬을 할 때는 테이블.칼럼명 으로 칼럼의 위치를 정확히 표기해주어야 함.
+    ```
+
+- OUTER JOIN: 동일한 값이 없는 행도 반환
+
+  - ~~~sql
+    SELECT * FROM articles LEFT OUTER JOIN users ON articles.user_id = users.id WHERE articles.user_id IS NOT NULL;
+    -- 중복되는 데이터는 제거된다.
+    ~~~
+
+- CROSS JOIN: 모든 데이터의 조합
+
+  - ~~~sql
+    SELECT * FROM users CROSS JOIN role;
+    -- 가능한 모든 경우를 출력
+    ~~~
+
+> INNER JOIN 과 LEFT OUTER JOIN의 차이점은 LEFT OUTER JOIN 은 NULL 값이 존재하면 같이 출력해주고, INNER JOIN은 그렇지 않다는 점이다.
+>
+> LEFT OUTER JOIN은 갖다 붙히기만 하는 것이고, INNER JOIN은 두 테이블의 교집합만 골라 합쳐서 출력한다.
