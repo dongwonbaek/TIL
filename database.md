@@ -590,4 +590,53 @@ ___
     - (1) 필수
     - (0) 선택
 
-- 정규화
+
+
+### 객체
+
+`객체란 모든 것을 의미한다. 객체 내에는 속성과 메서드가 있고 속성의 객체 내의 값, 메서드는 객체 내에 존재하는 함수이다.`
+
+
+
+### ORM
+
+- Object - Relational - Mapping
+- **객체 지향 프로그래밍 언어를 사용하여 호환되지 않는 유형의 시스템 간의 데이터를 변환하는 프로그래밍 기술**
+- 파이썬에서는 SQLAlchemy, peewee 등 라이브러리가 있으며 Django 프레임워크에서는 내장 Django ORM을 활용
+
+모델 설계 및 반영
+
+1. 클래스를 생성하여 내가 원하는 DB의 구조를 만든다.
+2. 클래스의 내용으로 데이터베이스에 반영하기 위한 마이그레이션 파일을 자동생성한다.
+3. DB에 migrate 한다.
+
+Migration
+
+- Model에 생긴 변화를 DB에 반영하기 위한 방법
+- 마이그레이션 파일을 만들어 DB 스키마를 반영한다.
+- 명령어
+  - makemigrations: 마이그레이션 파일 생성
+  - migrate: 마이그레이션을 DB에 반영
+
+
+
+
+~~~python
+python manage.py shell_plus 로 진입
+
+Genre.object.create(name = "인디밴드")
+genre = Genre.objects.get(id=1)
+genre.name
+'인디밴드'
+
+Genre.objects.get(id=1)
+#반드시 하나이여야 함. 단일 객체로 출력, 많거나 없으면 오류 발생(PK로 조회할 때 사용)
+
+Genre.objects.filter(id=1)
+#쿼리셋으로 출력, 여러개이거나 없어도 출력. 쿼리셋이라는 리스트로 출력(PK외의 것으로 조회할 때 사용)
+
+genre = Genre.objects.get(id=2)  #(genre라는 변수에  id 가 2인 객체를 가쳐온다.)
+genre.name #(가져온 객체의 name속성은?)
+#'트로트'
+genre.delete() #(장르에 할당된 객체를 삭제하여 반영한다.)
+~~~
