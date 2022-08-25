@@ -625,8 +625,8 @@ Migration
 python manage.py shell_plus 로 진입
 
 Genre.object.create(name = "인디밴드")
-genre = Genre.objects.get(id=1)
-genre.name
+genre = Genre.objects.get(id=1) #genre 라는 변수에 id가 1인 데이터를 할당
+genre.name	# 그 데이터의 name 칼럼을 출력
 '인디밴드'
 
 Genre.objects.get(id=1)
@@ -640,3 +640,122 @@ genre.name #(가져온 객체의 name속성은?)
 #'트로트'
 genre.delete() #(장르에 할당된 객체를 삭제하여 반영한다.)
 ~~~
+
+- **models.ForeignKey 필드**
+  - 2개의 필수 위치 인자
+    - Model class : 참조하는 모델
+    - on_delete: 외래 키가 참조하는 객체가 삭제되었을 떄 처리 방식
+      - CASCADE : 부모 객체(참조 된 객체)가 삭제 됐을 떄 이를 참조하는 객체도 삭제 	ex)`글과 댓글의 관계`
+      - PROTECT : 삭제되지 않음
+      - SET_NULL : NULL 설정
+      - SET_DEFAULT : 기본 값 설정
+    - 사용예시 : **genre = models.ForeingKey('Genre', on_delete=models.CASCADE)** 
+    - Genre라는 테이블의 기본키를 genre_id라는 외래키로 참조함. 삭제 시 같이 삭제
+
+- **Foreign Key (외래키)**
+
+  - 키를 사용하여 부모 테이블의 유일한 값을 참조(참조 무결성)
+    - 데이터베이스 관계 모델에서 관련된 2개의 테이블 간의 일관성
+  - 외래 키의 값이 반드시 부모 테이블의 기본 키일 필요는 없지만 유일한 값이어야 함
+
+- **역참조(_set)**
+
+  - genre = Genre.objects.get(id=1)
+
+    genre.album_set.all()
+
+    = id가 1인 장르를 가지고 있는 모든 앨범객체를 조회(역참조)
+
+### QuerySet API
+
+- **gt** 
+
+  - greater than
+
+  - 사용예시 : **Entry.objects.filter(id__gt=4)**
+
+    - SELECT * FROM Entry WHERE id >= 4;
+    - id가 4보다 큰 값
+
+    
+
+- **gte**
+
+  - SELECT * FROM Entry WHERE id >= 4;
+
+  
+
+- **lt, lte**
+
+  - SELECT * FROM Entry WHERE id < 4;
+  - SELECT * FROM Entry WHERE id <= 4;
+
+  
+
+- **in**
+
+  - 사용예시 : **Entry.objects.filter(id__in=[1, 3, 4])**
+
+    - SELECT * FROM Entry  WHERE id IN (1, 3, 4);
+    - id 필드(칼럼)가 1 또는 3 또는 4를 포함하는 인스턴스 조회
+
+  - 사용예시 : **Entry.objects.filter(headline__in='abc')**
+
+    - SELECT * FROM Entry WHERE headline IN ('a', 'b', 'c');
+    - headline 필드(칼럼)가 a 또는 b 또는 c 를 포함하는 인스턴스 조회
+
+    
+
+- **startswith**
+
+  - 사용예시 : **Entry.objects.filter(headline__startswith='Lennon')**
+
+    - SELECT * FROM Entry WHERE headline LIKE 'Lennon%';
+    - headline 필드(칼럼)에서 Lennon으로 시작하는 인스턴스 조회
+
+    
+
+- **istartswith**
+
+  - 사용예시 : **Entry.objects.filter(headline__istartswith='Lennon')**
+    - SELECT * FROM Entry WHERE headline ILIKE 'Lennon%';
+    - headline 필드(칼럼)에서 Lennon으로 시작하는 인스턴스를 대소문자 구분하지 않고 조회
+
+
+
+- **contains**
+  - **Entry.objects.get(headline__contains='Lennon')**
+    - SELECT * FROM Entry WHERE headline LIKE '%Lennon%';
+  - **Entry.objects.get(headline__ icontains='Lennon')**
+    - SELECT * FROM Entry WHERE headline ILIKE '%Lennon%';
+
+
+
+- **range**
+  - **Entry.objects.filter(pub_date__range=(start_date, end_date))**
+    - sart_date 와 end_date 사이에 있는 날짜를 가진 pub_date 인스턴스를 조회
+
+
+
+- 복합 활용
+
+  - **inner_qs = Blog.objects.filter(name__contains='Cheddar')**
+
+    **entries = Entry.objects.filter(blog__in=inner_qs)**
+
+    - 서브쿼리
+
+
+
+- 활용
+
+  - **Entry.objects.all()[1 : 3]**
+
+    - LIMIT 과 OFFSET으로 구성된 쿼리
+
+  - **Entry.objects.order_by('id')**
+
+    - 정렬 메서드
+    - id 대신 -id 를 대입하면 내림차순
+
+    
