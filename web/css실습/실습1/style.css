@@ -1,0 +1,36 @@
+/* 아래에 CSS를 작성해주세요. */
+.title1{
+  width: 900px;
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: 1px;
+}
+.title2{
+  width: 900px;
+  text-align: center;
+  margin-top: 1px;
+}
+.card-container{
+  width: 900px;
+  display: flex;
+}
+.card{
+  width: 300px;
+  text-align: center;
+  display: inline-block;
+}
+.card-image{
+  width: 95%;
+  border-radius: 1rem;
+}
+.info1{
+  font-size: 9px;
+  margin: 5px 17px;
+  color: gray;
+  text-align: left;
+}
+.info2{
+  font-size: 14px;
+  margin: 7px 17px;
+  text-align: left;
+}
