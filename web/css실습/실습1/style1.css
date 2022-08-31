@@ -1,4 +1,9 @@
-/* 아래에 CSS를 작성해주세요. */
+* {
+  box-sizing: border-box;
+}
+.box{
+  width: 900px;
+}
 .title1{
   font-size: 12px;
   margin-bottom: 1px;
@@ -9,13 +14,11 @@
   margin-top: 1px;
 }
 .card-container{
-  width: 900px;
   display: flex;
+  justify-content: flex-start;
 }
 .card{
   width: 300px;
-  text-align: center;
-  display: inline-block;
 }
 .card-image{
   width: 95%;

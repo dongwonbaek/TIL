@@ -1,0 +1,42 @@
+*{
+  box-sizing: border-box;
+}
+.card{
+  width: 300px;
+  height: 450px;
+  display: flex;
+  flex-direction: column;
+}
+.card-image1{
+  width: 95%;
+  position: relative;
+}
+.company{
+  color: gray;
+  font-size: 12px;
+  text-align: left;
+  margin: 3px 15px
+}
+.product-name{
+  color:black;
+  font-size: 12px;
+  text-align: left;
+  margin: 3px 15px
+}
+.sale{
+  color:skyblue;
+  font-size: 16px;
+  text-align: left;
+  margin: 3px 15px
+}
+.cost{
+  color:black;
+}
+.star{
+  font-size: 13px;
+  text-align: left;
+  margin: 3px 15px
+}
+.review{
+  color:gray;
+}
