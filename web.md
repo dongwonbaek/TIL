@@ -208,7 +208,7 @@
 
 
 
-### css 원칙 1
+### `css 원칙 1`
 
 **모든 요소는 네모(박스모델)이고, 위에서부터 아래로, 왼쪽에서 오른쪽으로 쌓인다.(좌측 상단에 배치)**
 
@@ -235,7 +235,7 @@
   }
   
   .margin-4{
-  	margin: 10px 20px 30px 40px; <!-- 상 10픽셀, 우 20픽셀, 하 30픽셀, 좌 40픽셀, (시계방향으로 적용됨)-->
+  	margin: 10px 20px 30px 40px; <!-- 상 10픽셀, 우 20픽셀, 하 30픽셀, 좌 40픽셀, (시계방향으로 적용)-->
   }
   ~~~
 
@@ -266,9 +266,9 @@
 
 - 기본적으로 모든 요소의 box-sizing은 content-box
 
-  - Padding을 제외한 순수 contecnts 영역만을 box로 지정
+  Padding을 제외한 순수 contecnts 영역만을 box로 지정
 
-- 다만, 우리가 일반적으로 영역을 볼 때는 border까지의 너비를 100px 보는 것을 원함
+- 다만, 우리가 일반적으로 영역을 볼 때는 border까지의 너비를 보는 것을 원함
 
   그럴 경우 box-sizing을 border-box로 설정
 
@@ -284,12 +284,12 @@
           background-color: blue;
       }
       
+  <!-- 박스 사이즈를 테두리까지 설정하여 박스가 겹치는 일을 방지한다.-->
       .box-sizing{
           box-sizing: border-box;
-          margin-top:50px;
+          margin-top: 50px;
       } 
   </style>
-  <!-- 박스 사이즈를 테두리까지 설정하여 박스가 겹치는 일을 방지한다.-->
   
   <!--활용예시-->
   <body>
@@ -301,7 +301,7 @@
 
   
 
-### CSS 원칙 2
+### `CSS 원칙 2`
 
 - **모든 요소는 네보(박스모델)이고, 좌측상단에 배치.**
 - **display에 따라 크기와 배치가 달라진다.**
@@ -309,8 +309,6 @@
 
 
 ### CSS Display
-
-
 
 - **display: block**
   - 줄 바꿈이 일어나는 요소
@@ -361,3 +359,145 @@
 	text-align: center;
 }
 ~~~
+
+
+
+### `CSS 원칙 3 : Position으로 위치의 기준을 변경`
+
+
+
+### CSS Position
+
+문서상에서 요소의 위치를 지정
+
+static: 모든 태그의 기본 값(기준 위치)
+
+- 일반적인 요소의 배치 순서에 따름(좌측 상단)
+- 부모 요소 내에서 배치될 때는 부모 요소의 위치를 기준으로 배치 됨
+
+
+
+아래는 좌표 프로퍼티(top, bottom, left, right)를 사용하여 이동 가능
+
+1. **relative** 상대 위치
+   
+   - 자기 자신의 static 위치를 기준으로 이동(normal flow 유지)
+   - 레이아웃에서 요소가 차지하는 공간은 static일 때와 같음(normal position 대비 offset)
+   
+2. **absolute** 절대 위치
+
+   - 요소를 일반적인 문서 흐름에서 제거 후 레이아웃에 공간을 차지하지 않음(normal flow에서 벗어남)
+   - static이 아닌 가장 가까이 있는 부모/조상 요소를 기준으로 이동(없는 경우 브라우저 화면 기준으로 이동)
+
+3. **fixed** 고정 위치
+
+   - 요소를 일반적인 문서 흐름에서 제거 후 레이아웃에 공간을 차지하지 않음(normal flow에서 벗어남)
+   - 부모 요소와 관계없이 viewport를 기준으로 이동 (스크롤 시에도 항상 같은 곳에 위치함)
+
+4. **sticky** 스크롤에 따라 static -> fixed로 변경
+
+   - 속성을 적용한 박스는 평소에 문서 안에서 position: static 상태와 같이 일반적인 흐름에 따르지만 
+
+     스크롤 위치가 임계점에 이르면 position: fixed와 같이 박스를 화면에 고정할 수 있는 속성
+
+   - 일반적으로 Navigaion Bar에서 사용됨
+
+
+
+
+
+### CSS Flexible Box layout
+
+- 행과 열 형태로 아이템들을 배치하는 1차원 레이아웃 모델
+- main axis (메인(가로) 축) 과 cross axis (교차(세로) 축)
+- **Flex Container(부모 요소)**
+  - flexbox 레이아웃을 형성하는 가장 기본적인 모델
+  - Flex Item 들이 놓여있는 영역
+  - **display 속성을 flex 혹은 inline-flex로 지정**
+- **Flex Item(자식 요소)** 
+  - 컨테이너에 속해 있는 컨텐츠(박스가 될 수도 있음)
+
+
+
+### 다양한 Flex 속성✔
+
+- #### 배치 설정
+
+  - ##### flex-direction :    `Main axis의 방향을 설정`
+
+    - **row** : 좌에서 우
+    - **row-reverse** : 우에서 좌
+    - **column** : 위에서 아래
+    - **column-reverse** : 아래에서 위
+
+    
+
+  - ##### flex-wrap
+
+    - 아이템이 컨테이너를 벗어나는 경우 해당 영역 내에 배치되도록 설정하여 기본적으로 컨테이너 영역을 벗어나지 않도록 함
+    - **wrap** : 좌에서 우로 , 자리가 없으면 줄바꿈.
+    - **nowrap(기본값) **: 좌에서 우로, 자리가 없으면 컨텐츠 크기 조절. 기본적으로 박스 내 공간을 모두 차지할 수 있게 컨텐츠 크기 조절.
+    - **wrap-reverse** : wrap 적용 후 시작부분과 끝부분을 뒤집음.
+
+    
+
+  - ##### flex-flow
+
+    - flex-direction 과 flex-wrap 의 shorthand (파이썬의 리스트 컴프리핸션과 같이 두 속성을 합쳐서 표현할 수 있음)
+    - EX)   flex-flow : row nowrap;
+    
+    
+
+- #### 공간 나누기
+
+  - ##### justify-content (main axis) : Main axis를 기준으로 공간 배분 **(flex-direction의 영향을 받음)**
+
+    - **flex-start** : 앞으로 정렬
+    - **flex-end** : 끝으로 정렬
+    - **center** : 중앙 정렬
+    - **space-between** : 아이템 사이의 간격을 균일하게 분배
+    - **space-around** : 아이템을 둘러싼 영역을 균일하게 분배
+    - **space-evenly** : 전체 영역에서 아이템 간 간격을 균일하게 분배
+
+    
+
+  - ##### align-content (cross axis) : Cross axis를 기준으로 공간 배분 (아이템이 한 줄로 배치되는 경우 확인할 수 없음)
+
+    - **justify-content** 와 같은 사용법
+    
+    
+
+- #### 정렬
+
+  - ##### align-items (모든 아이템을 cross axis 기준으로)
+    - **stretch(기본값)** : 컨테이너를 가득 채움
+    - **flex-start** : 위로 밀기
+    - **flex-end** : 아래로 밀기
+    - **center** : 가운데 정렬
+    - **baseline** : 텍스트의 baseline에 기준선을 맞춤
+    
+    
+    
+  - ##### align-self (개별 아이템을 cross axis 기준으로)
+    - align-items와 같은 방식으로 사용
+    - 컨테이너에 적용하는 것이 아니라 개별 아이템에 적용
+    
+    
+
+- #### 기타 속성
+
+  - ##### flex-grow
+
+    - 남은 영역을 아이템에 분배
+
+    
+
+  - ##### order
+
+    - 배치 순서를 정수형태로 지정함.
+
+    - 기본값은 0, 제일 작은 수를 가지고 있는 아이템부터 출력. 
+
+    - EX) 배치 순서를 지정하지 않은 3개의 아이템과 배치 순서를 -1로 지정한 아이템`(order: -1;)`이 있다면, 기본값이 0인 3개의 아이템들 보다 -1이 더 작기 때문에 -1로 지정한 아이템이 먼저 출력된다. 
+  
+      만약 배치 순서가 같다면 먼저 작성된 순서대로 출력된다.
