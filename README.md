@@ -1,4 +1,4 @@
-# What I learned (7.5 ~)📚
+# What I learned (2022 . 7 . 5 ~)📚
 
 - **[Markdown, Git](./1_markdown/markdown_git.md)**
 - **[Github](2_github/github.md)**
