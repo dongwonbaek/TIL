@@ -1,12 +1,12 @@
-# 강의 내용 (7.5 ~)✔
+# What I learned (7.5 ~)📚
 
-- **[깃(분산버전관리시스템)](./1_markdown_git/markdown_git.md)**
-- **[CLI 와 GUI](./1_markdown_git/markdown_git.md)**
-- **[마크다운 문법](./1_markdown_git/markdown_git.md)**
-- **[깃 허브 활용](./2_github/github.md)**
-- **[브랜치 관련 명령어](./3_branch_pull_merge/branch_pull_merge.md)**
-- **[깃헙을 통한 협업과정](./3_branch_pull_merge/branch_pull_merge.md)**
-- **[Python](python.md)**
-- **[Python Codeup 문제풀이](./python_codeup/codeup/)**
+- **[Markdown, Git](./1_markdown/markdown_git.md)**
+- **[Github](2_github/github.md)**
+- **[Python](3_python/python.md)**
+- **[Python Codeup](3_python/python_codeup/codeup/)**
+- **[Python SWEA ](3_python/python_swea/)**
+- [**Python Baekjoon**](3_python/python_BaekJoon)
+- **[Algorithm](3_python/Algorithm.md)**
+- [**Database**](4_database/database.md)
+- [**Web**](5_web/web.md)
 
-- **[Python SWEA 문제풀이](./4_python/python_swea/)**
