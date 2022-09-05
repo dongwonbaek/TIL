@@ -1,6 +1,6 @@
 # What I learned (2022 . 7 . 5 ~)📚
 
-- **[Markdown, Git](./1_markdown/markdown_git.md)**
+- **[Markdown, Git](1_markdown/markdown_git.md)**
 - **[Github](2_github/github.md)**
 - **[Python](3_python/python.md)**
 - **[Python Codeup](3_python/python_codeup/codeup/)**
