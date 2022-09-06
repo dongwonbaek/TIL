@@ -22,11 +22,12 @@ for a in result:
     
 area = 0
 highest = 0
-pathing = 0
-whole_path = 0
 highest_ = 0
-cnt2 = 0
 cnt1 = 0
+cnt2 = 0
+cnt = 0
+cnt_ = 0
+
 for b in range(min_, len(chango)):
     if chango[b] > highest:
         area += ((cnt2) * highest)
@@ -35,8 +36,6 @@ for b in range(min_, len(chango)):
         cnt2 = 0
     cnt2 += 1
 
-cnt_ = 0
-cnt = 0
 for c in range(len(chango) - 1, -1, -1):
     if chango[c] > highest_:
         area += (cnt_ * highest_)
