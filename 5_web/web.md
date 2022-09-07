@@ -641,6 +641,8 @@ static: 모든 태그의 기본 값(기준 위치)
 - 컨텐츠(CSS, JS, Image, Text 등)을 효율적으로 전달하기 위해 여러 노드에 가진 네트워크에 데이터를 제공하는 시스템
 - 개별 end-user의 가까운 서버를 통해 빠르게 전달 가능(지리적 이점)
 - 외부 서버를 활용함으로써 본인 서버의 부하가 적어짐
+- \<head> 에 \<link>를 추가하여 사용가능 (JS 링크는 \<body>에 삽입)
+- [bootstrap - dowonload](https://getbootstrap.com/docs/5.2/getting-started/download/)
 
 
 
@@ -672,7 +674,7 @@ static: 모든 태그의 기본 값(기준 위치)
 - "text-primary" : 글씨만 파란색
 - "bg-primary" : 배경만 파란색
 - "bg-primary text-danger" : 배경은 파란색 글씨는 파란색
-- [bootstrap docs color](https://getbootstrap.com/docs/5.2/customize/color/) 참고
+- [bootstrap - color](https://getbootstrap.com/docs/5.2/customize/color/) 참고
 
 
 
@@ -691,12 +693,15 @@ static: 모든 태그의 기본 값(기준 위치)
 
 #### Image
 
+- [bootstrap - images](https://getbootstrap.com/docs/5.2/content/images/)
 - 반응형 이미지를 삽입하려면 이미지 태그 클래스에 **img-fluid**, 이는 max-width: 100% 와 height:  auto 로 구성되어 있음. 당연히 상속되는 넓이가 존재하다면 그 넓이에 맞춰지게 됨.
 - **img-thumbnail** 을 활용하여 이미지에 굴곡진 1px두께의 테두리를 줄 수 있음.
 
 
 
 #### Display
+
+- [bootstrap - display](https://getbootstrap.com/docs/5.2/utilities/display/)
 
 - d, 사이즈, 블록유형으로 구성되며, 사이즈의 기본값은 모든 크기 이다. 
 
@@ -724,4 +729,16 @@ static: 모든 태그의 기본 값(기준 위치)
   5. 최종 블록의 유효 범위 
 
      : small 사이즈부터 middle 사이즈 전까지 보이고 middle 부터는 안보였다가 large 사이즈부터 다시 보이게
+
+
+
+### Component
+
+- button, button group, accordian, alert, breadcrumb, badge 등 다양한 UI요소가 존재함
+
+- [bootstrap 홈페이지](https://getbootstrap.com/)를 통해서 그때 그때 찾아서 활용하면 됨
+
+- 주의사항
+
+  `버튼을 눌렀을 때 어떤 동작이 이어지면 data-bs-target = " " 와 이에 대응하는 id가 존재하는 것.`
 
