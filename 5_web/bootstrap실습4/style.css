@@ -43,3 +43,11 @@ body{
   height: 4rem;
 }
 
+.customer{
+  max-width: 35rem;
+}
+
+.mail-size{
+  width: 4rem;
+  height: 4rem;
+}
