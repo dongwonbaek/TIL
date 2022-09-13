@@ -707,7 +707,7 @@ static: 모든 태그의 기본 값(기준 위치)
 
 - 순서대로 범위를 지정하여 블록의 최종 크기를 지정할 수 있다.
 
-- 크기 
+- **크기** (**breakpoint**)
 
   - xs    <576px
   - sm   >=576px
@@ -742,3 +742,20 @@ static: 모든 태그의 기본 값(기준 위치)
 
   `버튼을 눌렀을 때 어떤 동작이 이어지면 data-bs-target = " " 와 이에 대응하는 id가 존재하는 것.`
 
+- label 의 for 와 다른 태그의 id를 일치시키면 label을 눌렀을 때 포커스가 id의 태그로 이동함
+- 인풋을 서버로 전송하기 위해서는 인풋 태그에 name(변수)을 정해줘야 함
+
+
+
+#### Grid system(web design)
+
+- 요소들의 디자인과 배치에 도움을 주는 시스템
+- 기본 요소
+  - Column : 실제 컨텐츠를 포함하는 부분
+  - Gutter : 칼럼과 칼럼 사이의 공간(사이 간격)
+  - Container : Column들을 담고 있는 공간
+- Bootstrap Grid system은 flexbox로 제작됨
+- container, rows, column으로 컨텐츠를 배치하고 정렬
+- 반드시 기억해야 할 2가지
+  1. 12개의 column
+  2. 6개의 grid breakpoints 를 활용하여 반응형 웹을 디자인할 수 있음
