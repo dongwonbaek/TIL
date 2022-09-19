@@ -636,3 +636,96 @@ const me = {
     - JSON => 자바스크립트 객체
   - JSON.stringify()
     - 자바스크립트 객체 => JSON
+
+
+
+### Event
+
+- 네트워크 활동이나 사용자와의 상호작용 같은 사건의 발생을 알리기 위한 객체
+- 이벤트 발생
+  - 마우스를 클릭하거나 키보드를 누르는 등 사용자 행동으로 발생할 수도 있음
+  - 특정 메서드를 호출(Element.click())하여 프로그래밍적으로도 만들어 낼 수 있음
+
+
+
+#### addEventListener
+
+~~~javascript 
+//EventTarget.addEventListener(type, listener)
+
+<body>
+    <button id="btn">버튼</button>
+    <script>
+        const btn = doucment.querySelector('#btn') //id가 btn인 버튼을 변수btn에 할당
+        btn.addEventListener('click', function() { 
+            console.log('버튼 클릭!')
+        }) // 버튼이 클릭될 때마다 '버튼 클릭!' 출력
+    </script>
+</body>
+~~~
+
+~~~javascript
+<body>
+  <h2>Change my color</h2>
+  <label for="change-color-input">원하는 색상을 영어로 입력하세요.</label>
+  <input type="text" id="change-color-input">
+      
+  <script>
+    const colorInput = document.querySelector('#change-color-input')
+    colorInput.addEventListener('input', function(event) {
+      const h2Tag = document.querySelector('h2')
+      h2Tag.style.color = event.target.value 
+      // 중요! h2 태그 스타일에 color = '입력값'을 대입한다.
+    })
+  </script>
+</body>
+~~~
+
+
+
+#### Event 취소
+
+- event.preventDefault()
+- 현재 이벤트의 기본 동작을 중단
+- HTML 요소의 기본 동작을 작동하지 않게 막음
+  - ex)  a 태그의 기본 동작은 클릭 시 링크로 이동 / form 태그의 기본 동작은 form 데이터 전송
+- 이벤트를 취소할 수 있는 경우, 이벤트의 전파를 막지 않고 그 이벤트를 취소
+
+~~~javascript
+<body>
+  <input type="checkbox" id="my-checkbox">
+  <script>
+    const checkBox = document.querySelector('#my-checkbox')
+    checkBox.addEventListener('click', function(event) {
+      event.preventDefault() //체크박스 클릭시 아무일도 일어나지 않음
+      console.log(event)
+    })
+  </script>
+</body>
+~~~
+
+
+
+#### 클래스를 조작하는 방법
+
+태그의 클래스에 
+
+- 태그.classList.add() : 새로운 클래스를 추가하거나,
+- 태그.classList.remove() : 기존에 있던 클래스를 제거하거나
+- 태그.classList.replace() : 기존에 있던 클래스를 새로운 클래스로 대체하거나,
+- 태그.classList.toggle() : 있다면 제거하고, 없다면 추가할 수 있다. (클래스 on / off )
+
+
+
+#### input 값을 가져오는 방법
+
+~~~javascript
+<body>
+    <input type="password" name="password" id="password">
+	<script>
+		const password = document.querySelector('#password').value
+		// 인풋 태그에 .value를 붙히면 인풋에 입력된 값을 가져올 수 있다.
+	</script>
+</body>
+~~~
+

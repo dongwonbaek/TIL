@@ -123,3 +123,19 @@ git pull origin master
 5. 수정 작업
 6. 커밋 후 푸쉬(생성된 브랜치로)
 7. pull request 진행
+
+
+
+### Fork한 repository를 최신으로 동기화하기
+
+1. upsteam 이라는 이름으로 원본 repository를 추가한다.
+2. upstream repository의 내용을 불러온다.
+3. upstream repostiory의 master branch 로부터 나의 master branch로 merge 한다.
+4. 나의 repository에도 변경사항을 적용한다.\
+
+
+
+1. **git remote add upstream (URL)**
+2. **git fetch upstream**
+3. **git merge upstream/master**
+4. **git push origin master**
