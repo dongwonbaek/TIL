@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .carousel-items {
+      position: relative;
+      display: flex;
+      width: 10rem;
+      height: 10rem;
+      overflow: hidden;
+    }
+    .carousel-item {
+      position: absolute;
+      top: 0;
+      width: 10rem;
+      height: 10rem;
+      background-color: bisque;
+      display: none;
+    }
+    .active {
+      display: block;
+      animation: active 1.5s;
+    }
+    @keyframes active {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="carousel-items">
+      <div class="carousel-item active">1</div>
+      <div class="carousel-item">2</div>
+      <div class="carousel-item">3</div>
+      <div class="carousel-item">4</div>
+    </div>
+  </div>
+  <button id="prevBtn">prev</button>
+  <button id="nextBtn">next</button>
+  <form action="">
+    <input type="password" name="password" id="password">
+    <input type="password" name="password_confirmation" id="password_confirmation">
+    <button type="submit" id="submit">제출</button>
+  </form>
+  <script>
+    const prevBtn = document.querySelector('#prevBtn')
+    prevBtn.addEventListener('click', function() {
+      // 지금 active인 것은 어떻게 알죠?
+      const currentElement = document.querySelector('.active')
+      // 전체 item 중에....... 이 Element의 인덱스?
+      const items = document.querySelectorAll('.carousel-item')
+      const idx = [...items].indexOf(currentElement)
+      console.log(currentElement, items, idx)
+      currentElement.classList.toggle('active')
+      items[(items.length+idx-1)%items.length].classList.toggle('active')
+    })
+
+    const nextBtn = document.querySelector('#nextBtn')
+    nextBtn.addEventListener('click', function() {
+      // 지금 active인 것은 어떻게 알죠?
+      const currentElement = document.querySelector('.active')
+      // 전체 item 중에....... 이 Element의 인덱스?
+      const items = document.querySelectorAll('.carousel-item')
+      const idx = [...items].indexOf(currentElement)
+      console.log(currentElement, items, idx)
+      currentElement.classList.toggle('active')
+      items[(idx+1)%items.length].classList.toggle('active')
+    })
+    setInterval(function() {
+        const nextBtn = document.querySelector('#nextBtn')
+        nextBtn.click()
+      }, 10000)
+
+    document.addEventListener('load', function() {
+
+    })
+    const password = document.querySelector('#password')
+    const passwordConfirmation = document.querySelector('#password_confirmation')
+
+    const submit = document.querySelector('#submit')
+    // const reset = function() {
+    //   password.innerText = ''
+    //   passwordConfirmation.innerText = ''
+    // }
+    submit.addEventListener('click', function() {
+      if (password.target.value !== passwordConfirmation.target.value) {
+        alert('비밀번호가 일치하지 않습니다')
+      }
+    })
+  </script>
+</body>
+</html>
