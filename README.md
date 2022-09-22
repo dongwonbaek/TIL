@@ -9,4 +9,5 @@
 - **[Algorithm](3_python/Algorithm.md)**
 - [**Database**](4_database/database.md)
 - [**Web**](5_web/web.md)
-
+- [**Javascript**](6_javascript/javascript.md)
+- [**Django**](7_django/django.md)
