@@ -14,6 +14,8 @@ Framework를 잘 사용하기만 한다면 서비스 개발에 있어서 하나�
 
 Python으로 작성된, 서버를 구현하는 웹 Framework이다. 
 
+클라이언트에서 요청된 URL을 HTML문서로 응답하는 서버이다.
+
 Python이라는 언어의 강력함과 거대한 커뮤니티가 만나 수많은 유용한 기능들을 제공하고, Toss, 당근마켓, 요기요 등 거대 기업들이 현재 Django를 활용하고 있음
 
 
@@ -135,6 +137,8 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
    $ source server-venv/Scripts/activate
    ~~~
 
+
+
    
 
 3. **가상환경 종료**
@@ -150,9 +154,16 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
    ~~~bash
    $ pip install django==3.2.13
    ~~~
-
+   ~~~bash
+   # 현재 적용되어있는 pip 프로그램들의 이름을 requirements.txt라는 메모장에 저장하여 공유하기 쉽게 한다.
+   $ pip freeze > requirements.txt
+   
+# 다음 명령어를 통해 적용할 수 있다. 이 때 requirements.txt 파일은 가상환경(venv) 폴더 내에 있어야 한다.
+   $ pip install -r requirements.txt
+~~~
+   
    `버전 명시는 == , 장고의 가장 안정적인 버전이 3.2.13(LTS)버전`
-
+   
    `LTS (Long Term Support) : 장기 지원 버전`
 
 
@@ -204,7 +215,7 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
     
 
-11. 요청과 응답 설계
+11. **요청과 응답 설계**
 
     1. 주문서 정의 (urls.py)
     2. 로직 구현 (views.py)
@@ -222,6 +233,7 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
         path('index/', views.index), 
     ]
     # views.py 내의 index()함수를 실행하고, 경로는 index/로 한다.
+    # 만약 경로를 비워놓는다면('') root주소가 지정된다(메인홈페이지).
     ~~~
 
     
@@ -241,11 +253,9 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
             "num": number,
             "num2": number,
         }
-        # 
-        
         return render(request, "index.html", context)
     ~~~
-
+    
     
 
 14. **앱 내부에 templates 폴더 생성 (templates 이름은 변경하지 않는다.)**
@@ -254,16 +264,18 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
     12번에서 index라는 함수가 index.html 문서를 반환하게 작성했으므로 templates 폴더에 index.html을 작성한다.
 
+    
+
+15. **html에서 파이썬 활용하기 (Django 한정)**
+    
     ~~~html
-    <!-- html에서 파이썬 for문을 구현하는 법 (Django 한정)-->
     <body>
         {% for number in numbers %}
         <p>{{ number }}</p>
         {% endfor %} <!-- 기존 파이썬과는 조금 다르게 for문 종료를 명시하는 구문을 작성해야함-->
+     
     </body>
     ~~~
-
-    
 
 
 
