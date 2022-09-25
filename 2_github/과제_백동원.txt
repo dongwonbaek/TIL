@@ -1,0 +1,8 @@
+$ git clone https://github.com/rhello/hello.git
+$ git remote add origin https://github.com/rhello/hello.git
+$ git checkout -b feature
+$ touch hello.txt
+$ git add .
+$ git commit -m '[feature] edit:hello.txt'
+$ git push origin feature
+

@@ -139,8 +139,6 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
 
 
-   
-
 3. **가상환경 종료**
 
    ~~~bash
@@ -154,17 +152,19 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
    ~~~bash
    $ pip install django==3.2.13
    ~~~
+   `버전 명시는 == , 장고의 가장 안정적인 버전이 3.2.13(LTS)버전`
+   
+   `LTS (Long Term Support) : 장기 지원 버전`
+   
    ~~~bash
    # 현재 적용되어있는 pip 프로그램들의 이름을 requirements.txt라는 메모장에 저장하여 공유하기 쉽게 한다.
    $ pip freeze > requirements.txt
    
-# 다음 명령어를 통해 적용할 수 있다. 이 때 requirements.txt 파일은 가상환경(venv) 폴더 내에 있어야 한다.
+   # 다음 명령어를 통해 적용할 수 있다. 이 때 requirements.txt 파일은 가상환경	(venv) 폴더 내에 있어야 한다.
    $ pip install -r requirements.txt
-~~~
+   ~~~
    
-   `버전 명시는 == , 장고의 가장 안정적인 버전이 3.2.13(LTS)버전`
-   
-   `LTS (Long Term Support) : 장기 지원 버전`
+
 
 
 
@@ -173,8 +173,9 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
    ~~~bash
    $ django-admin startproject [프로젝트이름] [시작경로]
    ~~~
-
-   `시작경로에 현재폴더를 지정하고 싶으면 . 을 입력하면 된다.`
+   
+   
+      `시작경로에 현재폴더를 지정하고 싶으면 . 을 입력하면 된다.`
 
 
 
@@ -184,7 +185,8 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
    $ code .
    ~~~
 
-   
+
+
 
 7. **장고 설치 시 생성된 manage.py를 실행하여 내 컴퓨터에만 존재하는 서버 실행**
 
@@ -193,7 +195,8 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
    # 실행하기 전에 ls를 입력하여 manage.py 파일이 현재 경로에 존재하는지 확인
    ~~~
 
-   
+
+
 
 8. **브라우저에 localhost:8000 입력**
 
@@ -236,9 +239,8 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
     # 만약 경로를 비워놓는다면('') root주소가 지정된다(메인홈페이지).
     ~~~
 
-    
 
-    
+​    
 
 13. **views.py 파일에서 어떤 내용을 불러올 것인지에 대한 정보를 삽입**
 
@@ -282,6 +284,3 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
         {% endif %}
     </body>
     ~~~
-
-
-

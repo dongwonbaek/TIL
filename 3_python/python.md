@@ -607,6 +607,64 @@ w의 첫 번째 위치를 반환, 없으면 오류 반환
 
 
 
+### 경우의 수
+
+- 순열(Permutation) : 순서는 있으나 중복 없는 모든 경우의 수
+
+  ~~~python
+  list_ = ['A', 'B', 'C']
+  
+  result = permutations(list_, 2)
+  print(result)
+  
+  # 결과값
+  # [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')]
+  ~~~
+
+  
+
+- 조합(Combination) : 순서 상관 없는 경우의 수
+
+  ~~~python
+  list_ = ['A', 'B', 'C']
+  
+  printList = permutations(list_, 2)
+  print(result)
+  
+  # 결과값
+  # [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')]
+  ~~~
+
+  
+
+- 중복 순열(Permutation with repetition) : 중복을 허용하는 순열
+
+  ~~~python
+  list_ = ['A', 'B', 'C']
+  
+  result = product(list_, repeat = 2)
+  print(result)
+  
+  # 결과값
+  # [('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'B'), ('B', 'C'), ('C', 'A'), ('C', 'B'), ('C', 'C')]
+  ~~~
+
+
+
+- 중복 조합(Combination with repetition)
+
+  ~~~python
+  list_ = ['A', 'B', 'C']
+  
+  result = combinations_with_replacement(list_, 2)
+  print(result)
+  
+  # 결과값
+  # [('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'B'), ('B', 'C'), ('C', 'C')]
+  ~~~
+
+  
+
 ### 탐색 및 정렬
 
 **.index(x)** 
