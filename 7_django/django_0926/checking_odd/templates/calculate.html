@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+  <style>
+    .box {
+      display: flex;
+      flex-direction: column;
+      justify-self: center;
+      align-items: center;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <h1>{{ number_a }} + {{ number_b }} = {{ plus_ }}</h1>
+    <h1>{{ number_a }} - {{ number_b }} = {{ minus_ }}</h1>
+    <h1>{{ number_a }} * {{ number_b }} = {{ multiply_ }}</h1>
+    <h1>{{ number_a }} // {{ number_b }} = {{ division_ }}</h1>
+  </div>
+</body>
+
+</html>

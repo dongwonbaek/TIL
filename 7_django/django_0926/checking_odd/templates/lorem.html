@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="/ipsum">
+  <div class="m-3">
+    <h4>문단의 수를 입력하세요. : <input type="text" name="num_paragraphs"></h4>
+    <h4>한 문단에 들어갈 단어 수를 입력하세요. : <input type="text" name="num_words"></h4>
+    <input type="submit" class="btn btn-primary">
+  </div>
+</form>
+{% endblock %}
