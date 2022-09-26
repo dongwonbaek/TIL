@@ -284,3 +284,48 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
         {% endif %}
     </body>
     ~~~
+
+
+
+### Variable routing
+
+- URL 주소를 변수를 사용하는 것을 의미
+- URL의 일부를 변수로 지정하여 view 함수의 인자로 넘길 수 있음
+- 즉, 변수 값에 따라 하나의 path()에 여러 페이지를 연결 시킬 수 있음
+
+- 변수는 '<>' 에 정의하여 view 함수의 인자로 할당됨
+
+- 기본 타입은 string이며 5가지 타입으로 명시할 수 있음
+
+  - str
+
+  - int
+
+  - slug
+
+  - uuid
+
+  - path
+
+   ~~~python
+    # urls.py
+    urlpatterns = [
+        path('hello/<str:name>/', views.hello),
+    ]
+    
+    # views.py
+    def hello(request, name):
+        context = {
+            'name': name,
+        }
+        return render(request, 'hello.hetml', context)
+   ~~~
+
+   ~~~html
+    <!-- templates/hello.html -->
+    <h1>
+        만나서 반가워요 {{ name }} 님!
+    </h1>
+   ~~~
+
+  
