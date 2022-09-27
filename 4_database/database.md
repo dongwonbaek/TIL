@@ -622,7 +622,7 @@ Migration
 
 
 ~~~python
-python manage.py shell_plus 로 진입
+# python manage.py shell_plus 로 진입 (Django 내장 ORM)
 
 Genre.object.create(name = "인디밴드")
 genre = Genre.objects.get(id=1) #genre 라는 변수에 id가 1인 데이터를 할당
@@ -630,24 +630,30 @@ genre.name	# 그 데이터의 name 칼럼을 출력
 '인디밴드'
 
 Genre.objects.get(id=1)
-#반드시 하나이여야 함. 단일 객체로 출력, 많거나 없으면 오류 발생(PK로 조회할 때 사용)
+# 반드시 하나이여야 함. 단일 객체로 출력, 많거나 없으면 오류 발생(PK로 조회할 때 사용)
 
 Genre.objects.filter(id=1)
-#쿼리셋으로 출력, 여러개이거나 없어도 출력. 쿼리셋이라는 리스트로 출력(PK외의 것으로 조회할 때 사용)
+# 쿼리셋으로 출력, 여러개이거나 없어도 출력. 쿼리셋이라는 리스트로 출력(PK외의 것으로 조회할 때 사용)
 
-genre = Genre.objects.get(id=2)  #(genre라는 변수에  id 가 2인 객체를 가쳐온다.)
+genre = Genre.objects.get(id=2)  # (genre라는 변수에  id 가 2인 객체를 가쳐온다.)
 genre.name #(가져온 객체의 name속성은?)
-#'트로트'
+# '트로트'
 genre.delete() #(장르에 할당된 객체를 삭제하여 반영한다.)
 ~~~
 
 - **models.ForeignKey 필드**
   - 2개의 필수 위치 인자
+
     - Model class : 참조하는 모델
     - on_delete: 외래 키가 참조하는 객체가 삭제되었을 떄 처리 방식
-      - CASCADE : 부모 객체(참조 된 객체)가 삭제 됐을 떄 이를 참조하는 객체도 삭제 	ex)`글과 댓글의 관계`
+      - CASCADE : 부모 객체(참조 된 객체)가 삭제 됐을 떄 이를 참조하는 객체도 삭제 	
+
+        ex)`글과 댓글의 관계`
+
       - PROTECT : 삭제되지 않음
+
       - SET_NULL : NULL 설정
+
       - SET_DEFAULT : 기본 값 설정
     - 사용예시 : **genre = models.ForeingKey('Genre', on_delete=models.CASCADE)** 
     - Genre라는 테이블의 기본키를 genre_id라는 외래키로 참조함. 삭제 시 같이 삭제
@@ -666,96 +672,358 @@ genre.delete() #(장르에 할당된 객체를 삭제하여 반영한다.)
 
     = id가 1인 장르를 가지고 있는 모든 앨범객체를 조회(역참조)
 
-### QuerySet API
-
-- **gt** 
-
-  - greater than
-
-  - 사용예시 : **Entry.objects.filter(id__gt=4)**
-
-    - SELECT * FROM Entry WHERE id >= 4;
-    - id가 4보다 큰 값
-
-    
-
-- **gte**
-
-  - SELECT * FROM Entry WHERE id >= 4;
-
-  
-
-- **lt, lte**
-
-  - SELECT * FROM Entry WHERE id < 4;
-  - SELECT * FROM Entry WHERE id <= 4;
-
-  
-
-- **in**
-
-  - 사용예시 : **Entry.objects.filter(id__in=[1, 3, 4])**
-
-    - SELECT * FROM Entry  WHERE id IN (1, 3, 4);
-    - id 필드(칼럼)가 1 또는 3 또는 4를 포함하는 인스턴스 조회
-
-  - 사용예시 : **Entry.objects.filter(headline__in='abc')**
-
-    - SELECT * FROM Entry WHERE headline IN ('a', 'b', 'c');
-    - headline 필드(칼럼)가 a 또는 b 또는 c 를 포함하는 인스턴스 조회
-
-    
-
-- **startswith**
-
-  - 사용예시 : **Entry.objects.filter(headline__startswith='Lennon')**
-
-    - SELECT * FROM Entry WHERE headline LIKE 'Lennon%';
-    - headline 필드(칼럼)에서 Lennon으로 시작하는 인스턴스 조회
-
-    
-
-- **istartswith**
-
-  - 사용예시 : **Entry.objects.filter(headline__istartswith='Lennon')**
-    - SELECT * FROM Entry WHERE headline ILIKE 'Lennon%';
-    - headline 필드(칼럼)에서 Lennon으로 시작하는 인스턴스를 대소문자 구분하지 않고 조회
 
 
+### QuerySet 메서드
 
-- **contains**
-  - **Entry.objects.get(headline__contains='Lennon')**
-    - SELECT * FROM Entry WHERE headline LIKE '%Lennon%';
-  - **Entry.objects.get(headline__ icontains='Lennon')**
-    - SELECT * FROM Entry WHERE headline ILIKE '%Lennon%';
+1. **Select**
 
+   - **[클래스명].objects.all()**
 
+     : 해당 테이블 안에 있는 모든 데이터 조회하여 QuerySet 타입으로 반환
 
-- **range**
-  - **Entry.objects.filter(pub_date__range=(start_date, end_date))**
-    - sart_date 와 end_date 사이에 있는 날짜를 가진 pub_date 인스턴스를 조회
+     ~~~bash
+     # 테이블 내 모든 데이터를 조회
+     In : Drink.objects.all()
+     ~~~
 
+     
 
+   - **[클래스명].objects.get()**
 
-- 복합 활용
+     : 하나의 row만 조회. 주로 기본키 컬럼으로 조회한다. 결과가 1건 이상일 때는 에러를 발생시킨다. `QuerySet 타입이 아닌 객체 타입으로 반환한다는 점 주의.`
 
-  - **inner_qs = Blog.objects.filter(name__contains='Cheddar')**
+     ~~~bash
+     # PK가 1인 데이터만 조회
+     In : Drink.objects.get(id=1)
+     ~~~
 
-    **entries = Entry.objects.filter(blog__in=inner_qs)**
+     
 
-    - 서브쿼리
+   - **[클래스명].objects.filter()**
 
+     : 특정 조건에 맞는 row만 조회하고 싶을 때 사용한다. QuerySet 타입으로 반환.
 
+     ~~~bash
+     # category_id가 1인 데이터만 조회
+     In : Drink.objects.filter(category_id=1)
+     ~~~
 
-- 활용
+     
 
-  - **Entry.objects.all()[1 : 3]**
+   - **[클래스명].objects.exclude()**
 
-    - LIMIT 과 OFFSET으로 구성된 쿼리
+     : 특정 조건을 제외한 데이터만 조회하고 싶을 때 사용한다. QuerySet 타입으로 반환.
 
-  - **Entry.objects.order_by('id')**
+     ~~~bash
+     # category_id = 1인 데이터를 제외한 모든 데이터 조회
+     In : Drink.objects.exclude(category_id=1)
+     ~~~
 
-    - 정렬 메서드
-    - id 대신 -id 를 대입하면 내림차순
+     
 
-    
+   - **Lookup filter**
+
+     : filter(), exclude() 메서드에서 사용 가능한 내장 모듈로, 필드 별 구체적인 값에 대한 비교를 가능하게 하는 Django의 내장 모듈이다.
+
+     - **__contains** : 특정 문자가 포함된 것을 찾을 때 사용(대소문자 구분)
+
+       ~~~bash
+       # english_name 컬럼에 'Blend'라는 단어가 들어간 데이터 조회(대소문자 구분)
+       In : Drink.objects.filter(english_name__contains="Blend")
+       ~~~
+
+     - **__icontains** : 특정문자가 포함된 것을 찾을 때 사용(대소문자를 구분하지 않음)
+
+       ~~~bash
+       # english_name 컬럼에 'blend'라는 단어가 들어간 데이터 조회(대소문자를 구분하지 않음)
+       In : Drink.objects.filter(english_name__icontains="blend")
+       ~~~
+
+     - **__startswith** : 특정문자로 시작하는 것을 찾을 때 사용
+
+       ~~~bash
+       # english_name 컬럼에 'Nitro'로 시작하는 문자열을 가진 데이터 조회(대소문자 구분)
+       In : Drink.objects.filter(english_name__startswith="Nitro")
+       ~~~
+
+     - **__endswith** : 특정문자로 끝나는 것을 찾을 때 사용
+
+       ~~~bash
+       # english_name 컬럼에서 'Tea'로 끝나는 문자를 가진 데이터 조회(대소문자 구분)
+       In : Drink.objects.filter(english_name__enswith="Tea")
+       ~~~
+
+     - **__lt** : 특정값 보다 작은 데이터만 조회(less than의 약자)
+
+       ~~~bash
+       # id가 3보다 작은 데이터만 조회
+       In : Drink.objects.filter(id__lt=3)
+       # lte는 3도 포함한다.
+       ~~~
+
+     - **__gt** : 특정값 보다 큰 데이터만 조회(greater than의 약자)
+
+       ~~~bash
+       # id가 3보다 큰 데이터만 조회(3포함 X)
+       In : Drink.objects.filter(id__gt=3)
+       # gte는 3도 포함한다.
+       ~~~
+
+     - **__isnull** : True로 지정 시 특정 필드 값이 null인 것만 조회
+
+       ~~~bash
+       # description 컬럼이 null인 것만 조회
+       In : Drink.objects.filter(description__isnull=True)
+       # description 컬럼이 null이 아닌 것만 조회
+       In : Drink.objects.filter(description__isnull=False)
+       ~~~
+
+     - **__in** : 리스트 안에 지정한 문자열들 중에 하나라도 포함된 데이터를 찾을 때 사용(단, 문자열과 정확히 일치해야함)
+
+       ~~~bash
+       # english_name 필드에 'Malcha' 또는 'Nitro Cold Brew' 값이 있는 것만 조회
+       In : Drink.obects.filter(english_name__in=['Malcha', 'Nitro Cold Brew'])
+       ~~~
+
+     - **\_\_year, \_\_month, \_\_day, \_\_date** : date 타입의 필드에서 특정 년(_\_year), 월(\_\_month), 일(\_\_day) 혹은 특정 날짜 (\_\_date: YY-MM-DD형식)의 데이터를 찾을 때 사용
+
+       ~~~bash
+       # pub_date 필드에서 년도가 2021인 것만 조회
+       In : Question.objects.filter(pub_date__year='2021')
+       ~~~
+       
+     - **__range** : sart_date 와 end_date 사이에 있는 날짜를 가진 pub_date 인스턴스를 조회
+
+       ~~~bash
+       # pub_date 필드에서 날짜가 start_date 와 end_date 사이에 있는 데이터만 조회
+       In : Entry.objects.filter(pub_date__range=(start_date, end_date))
+       ~~~
+
+       
+
+   - **AND (&)  /  OR (|)**
+
+     : filter() 메서드 사용 시, 두개 이상의 조건을 AND 또는 OR을 이용하여 표현할 수 있다. 
+
+     ~~~bash
+     # AND 예시 (Drink테이블에서 id가 6보다 크고, korean_name이 '라임'을 포함하는 데이터만 출력)
+     IN : Drink.objects.filter(id__gt=6) & Drink.objects.filter(korean_name__contains = '라임')
+     
+     # OR 예시 (Drink테이블에서 id가 6보다 크거나, korean_name이 '라임'을 포함하는 데이터만 출력)
+     IN : Drink.objects.filter(id__gt=6) | Drink.objects.filter(korean_name__contains = '라임')
+     ~~~
+
+     
+
+   - **[클래스명].objects.count()**
+
+     : 쿼리셋에 포함된 데이터 개수를 리턴한다.
+
+     ~~~bash
+     # Drink 테이블에 몇 개의 데이터가 들어있는지 조회
+     In : Drink.objects.count()
+     Out : 8
+     ~~~
+
+     
+
+   - **[클래스명].objects.exists()**
+
+     : 해당 테이블에 데이터가 있는지 확인. 있으면 True, 없으면 False 반환.
+
+     ~~~bash
+     # Menu에 name이 '음료'인 데이터가 있으면 True, 없으면 False
+     In : Menu.objects.filter(name="음료").exists()
+     Out : True
+     ~~~
+
+     
+
+   - **[클래스명].objects.values()**
+
+     : QuerySet의 내용을 딕셔너리 형태로 반환한다. 인자값에 아무것도 넣지 않으면 해당 클래스의 모든 필드와 그 값을 보여주고, 인자값에 특정 필드를 입력하면 입력한 필드에 대한 값을 반환한다.
+
+     ~~~bash
+     # Menu 테이블의 모든 필드를 딕셔너리 형태로 반환
+     In : Menu.objects.values()
+     Out: <QuerySet [{'id': 1, 'name': '음료'}, {'id': 2, 'name': '푸드'}, {'id': 3, 'name': '상품'}, {'id': 4, 'name': '카드'}]>
+     
+     # Menu 테이블의 name 필드만 딕셔너리 형태로 반환
+     In : Menu.objects.values('name')
+     Out: <QuerySet [{'name': '음료'}, {'name': '푸드'}, {'name': '상품'}, {'name': '카드'}]>
+     ~~~
+
+     
+
+   - **[클래스명].objects.values_list()**
+
+     : values()와 같으나 QuerySet의 내용을 딕셔너리가 아닌 리스트 타입으로 반환
+
+     ~~~bash
+     In : Menu.objects.values_list()
+     Out: <QuerySet [(1, '음료'), (2, '푸드'), (3, '상품'), (4, '카드')]>
+     
+     In : Menu.objects.values_list('name')
+     Out: <QuerySet [('음료',), ('푸드',), ('상품',), ('카드',)]>
+     ~~~
+
+     
+     
+   - **[클래스명].objects.order_by()**
+
+     : 특정 필드를 기준으로 정렬을 할 때 사용, 필드명 앞에 -가 붙으면 내림차순을 의미한다.
+
+     ~~~bash
+     # korean_name 필드를 기준으로 오름차순 정렬
+     In : Drink.objects.order_by('korean_name')
+     
+     # korean_name 필드를 기준으로 내림차순 정렬, 두번째 기준은 id 필드
+     In : Drink.objects.order_by('-korean_name', 'id')
+     ~~~
+
+     
+
+   - **[클래스명].objects.first(), [클래스명].objects.last()**
+
+     : 쿼리 셋 결과 중 가장 첫번째 row만 조회할 때 사용, 쿼리 셋 결과 중 가장 마지막 row만 조회할 때 사용. 둘다 객체 타입 반환.
+
+     ~~~bash
+     # 가장 첫번째 row만 조회
+     In : Drink.objects.first()
+     
+     # 가장 마지막 row만 조회
+     In : Drink.objects.last()
+     ~~~
+
+     
+
+   - **[클래스명].objects.aggregate()**
+
+     : django의 집계함수 모듈(Avg, Max, Min, Count, Sum 등)을 사용할 때 쓰이는 메소드, 집계함수들을 파라미터로 받는다. 딕셔너리 타입으로 반환한다. 
+
+     ~~~bash
+     # 집계함수를 사용하려면 import 해줘야 함
+     In : from django.db.models import Max, Min, Avg, Sum
+     
+     # Nutrition 테이블의 id 컬럼과 one_serving_kcal 컬럼만 조회
+     In : Nutrition.objects.values('id','one_serving_kcal')
+     Out: <QuerySet [{'id': 1, 'one_serving_kcal': Decimal('75.00')}, {'id': 2, 'one_serving_kcal': Decimal('120.00')}]>
+     
+     # one_serving_kcal 값 모두 더하기
+     In : Nutrition.objects.aggregate(Sum('one_serving_kcal'))
+     Out: {'one_serving_kcal__sum': Decimal('195.00')}
+     
+     # one_serving_kcal컬럼에서 가장 큰 값과 가장 작은 값의 차이
+     In : Nutrition.objects.aggregate(diff_kcal = Max('one_serving_kcal') - Min('one_serving_kcal'))
+     Out: {'diff_kcal': Decimal('45.00')}
+     
+     # one_serving_kcal 컬럼 값들의 평균
+     In : Nutrition.objects.aggregate(avg_kcal = Avg('one_serving_kcal'))
+     Out: {'avg_kcal': Decimal('97.500000')}
+     ~~~
+
+2. **Insert**
+
+   - **[클래스명].objects.create()**
+
+     ~~~bash
+     In : Nutrition.objects.create(one_serving_kcal=120, sodium_mg=70, saturated_fat_g=0, sugers_g=25, protein_g=1, caffeine_mg=35, drink_id=3, size="Tall(톨)", size_fluid_ounce=355, size_ml=12)
+     ~~~
+
+     
+
+   - **[클래스명].objects.bulk_create()**
+
+     : 여러 개의 objects를 한꺼번에 생성할 때 사용
+
+     ~~~bash
+     In : Nutrition.objects.bulk_create([
+     Nutrition(one_serving_kcal = 5, sodium_mg = 5, saturated_fat_g = 0, sugers_g = 0, protein_g= 0, caffeine_mg = 245, drink_id = 2, size = 'Tall(톨)', size_fluid_ounce = 355, size_ml = 12),
+     Nutrition(one_serving_kcal = 290, sodium_mg = 110, saturated_fat_g = 0.9, sugers_g = 57, protein_g = 8, caffeine_mg = 0, drink_id = 4, size = 'Tall(톨)', size_fluid_ounce = 355, size_ml = 12) 
+     ])
+     ~~~
+
+     
+
+   - **[클래스명].objects.get_or_create()**
+
+     : 해당 테이블에 조건에 맞는 데이터가 이미 존재하면 get을 해오고, 없으면 create하는 메소드. 튜플 타입을 반환해주는데 get 또는 create한 객체 와 True/False 형식으로 반환해준다. 여기서 True/False는 이미 존재하는 데이터면(=get하는 경우) False, 없는 데이터면(=create하는 경우) True를 의미
+
+     ~~~bash
+     # 이미 존재하는 데이터를 get_or_create 했을 때
+     In : Drink.objects.filter(korean_name='나이트로 쇼콜라 클라우드')
+     Out: <QuerySet [<Drink: 나이트로 쇼콜라 클라우드>]>
+     
+     In : new_drink = Drink.objects.get_or_create(korean_name='나이트로 쇼콜라 클라우드')
+     
+     # 기존에 있는 데이터 반환
+     In : new_drink
+     Out: (<Drink: 나이트로 쇼콜라 클라우드>, False)
+     
+     # 없는 데이터를 get_or_create 했을 때
+     In : Drink.objects.filter(korean_name='new')
+     Out: <QuerySet []>
+     
+     In : new_drink
+     Out: (<Drink: new>, True)
+     
+     # 새로 추가된 것을 확인할 수 있다.
+     In : Drink.objects.filter(korean_name='new')
+     Out: <QuerySet [<Drink: new>]>
+     ~~~
+
+     
+
+3. **Update**
+
+   - 업데이트 할 row를 변수에 저장하고 그 변수의 필드에 접근하여 값을 변경할 수 있음. (반드시 save()해줘야 저장됨)
+
+     ~~~bash
+     a = Drink.objects.get(id=8)
+     
+     In : a
+     Out: <Drink: 라임패션티>
+     
+     # id가 8인 row의 description 컬럼 값을 'Lime Passion 2'로 업데이트
+     In : a.description = "Lime Passion 2"
+     
+     # 변경사항 저장 >> 실제 DB에 적용됨
+     In : a.save()
+     
+     # 결과 확인
+     In : Drink.objects.values('id','description').filter(id=8)
+     Out: <QuerySet [{'id': 8, 'description': 'Lime Passion 2'}]
+     ~~~
+
+     
+
+   - [클래스명].objects.filter().update()
+
+     ~~~bash
+     # filter로 조건을 걸고(id=8) 그 row의 특정 컬럼(discription) 값을 update
+     In : Drink.objects.filter(id=8).update(description = "Lime Passion 3")
+     Out: 1
+     
+     # 결과 확인
+     In : Drink.objects.values('id','description').filter(id=8)
+     Out: <QuerySet [{'id': 8, 'description': 'Lime Passion 3'}]>
+     ~~~
+
+     
+
+4. **Delete**
+
+   - 삭제할 row를 변수에 저장하고 그 변수에서 delete()메서드로 데이터를 삭제한다.
+
+     ~~~bash
+     # 변수에 저장
+     In : a = Menu.objects.get(id=5)
+     
+     # 삭제
+     In : a.delete()
+     Out: (1, {'products.Menu': 1})
+     ~~~
+
+     
+

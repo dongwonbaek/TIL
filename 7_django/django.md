@@ -328,4 +328,40 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
     </h1>
    ~~~
 
-  
+
+
+
+### 템플릿 상속
+
+- 모든 템플릿에 공통적으로 부트스트랩을 적용시킨 기준 템플릿을 만들 수 있을까?
+
+~~~html
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    {% block content %}
+    {% endblock content %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
+</body>
+</html>
+~~~
+
+~~~html
+<!-- base.html을 활용한 다른 html파일 -->
+{% extends '기준 템플릿.html' %}
+<!-- extends 는 템플릿 최상단 폴더를 기준으로 한다. -->
+{% block content %}
+	<h1>
+        안녕하세요~
+	</h1>
+{% end block content %}
+<!-- content는 다른 이름으로 대체할 수 있고 그렇기 때문에 여러 블럭을 지정할 수도 있다. -->
+~~~
+

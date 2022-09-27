@@ -14,7 +14,7 @@ def checking_odd(request, number):
         "number": number,
         "text": text,
     }
-    return render(request, "checking_odd.html", context)
+    return render(request, "checking_odd/checking_odd.html", context)
 
 
 def calculate(request, number_a, number_b):
@@ -27,12 +27,12 @@ def calculate(request, number_a, number_b):
         "division_": number_a // number_b,
         "multiply_": number_a * number_b,
     }
-    return render(request, "calculate.html", context)
+    return render(request, "checking_odd/calculate.html", context)
 
 
 def animal(request):
 
-    return render(request, "animal.html")
+    return render(request, "checking_odd/animal.html")
 
 
 def result(request):
@@ -66,11 +66,11 @@ def result(request):
         "공작",
     ]
     context = {"animal": random.choice(animal), "name": request.GET["name"]}
-    return render(request, "result.html", context)
+    return render(request, "checking_odd/result.html", context)
 
 
 def lorem(request):
-    return render(request, "lorem.html")
+    return render(request, "checking_odd/lorem.html")
 
 
 def ipsum(request):
@@ -100,8 +100,8 @@ def ipsum(request):
     context = {
         "result": result2,
     }
-    return render(request, "ipsum.html", context)
+    return render(request, "checking_odd/ipsum.html", context)
 
 
 def root(request):
-    return render(request, "root.html")
+    return render(request, "checking_odd/root.html")
