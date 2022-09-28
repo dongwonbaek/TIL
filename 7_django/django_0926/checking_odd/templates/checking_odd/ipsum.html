@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<a href="/lorem" class="btn btn-primary m-3">돌아가기</a>
+<a href="{% url 'checking:lorem' %}" class="btn btn-primary m-3">돌아가기</a>
 {% for a in result %}
 <p class="m-3">{{ a }}</p>
 <hr>

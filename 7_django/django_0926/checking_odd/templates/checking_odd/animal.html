@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="/result" class="m-3">
+<form action="{% url 'checking:result' %" class="m-3">
   <p>이름을 입력하세요.</p>
   <p><input type="text" name="name"></p>
   <button type="submit" class="btn btn-primary">전생확인하기</button>

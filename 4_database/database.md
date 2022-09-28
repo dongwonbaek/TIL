@@ -674,7 +674,7 @@ genre.delete() #(장르에 할당된 객체를 삭제하여 반영한다.)
 
 
 
-### QuerySet 메서드
+### Django 내장 QuerySet 메서드
 
 1. **Select**
 

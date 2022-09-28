@@ -2,5 +2,5 @@
 {% block content %}
 <h1>작성 완료</h1>
 <p>작성내용: {{ content }}</p>
-<a href="/articles" class="btn btn-primary">홈으로</a>
+<a href="{% url 'articles:index' %}" class="btn btn-primary">홈으로</a>
 {% endblock content %}

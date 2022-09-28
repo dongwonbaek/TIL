@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="m-3">
-  <a href="/animal" class="btn btn-primary">animal</a>
-  <a href="lorem" class="btn btn-primary">lorem</a>
+  <a href="{% url 'checking:animal' %}" class="btn btn-primary">animal</a>
+  <a href="{% url 'checking:lorem' %}" class="btn btn-primary">lorem</a>
 </div>
 {% endblock %}

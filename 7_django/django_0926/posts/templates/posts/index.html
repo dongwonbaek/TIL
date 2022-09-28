@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>게시판</h1>
+
+<ul>
+  {% for post in posts %}
+  <li>
+    제목: {{ post.title }} 내용: {{ post.content }}
+    <a href="" class="btn btn-dark">수정</a>
+    <a href="/posts/delete/{{ post.id }}" class="btn btn-dark">삭제</a>
+  </li>
+  {% endfor %}
+</ul>
+<a href="{% url 'posts:new' %}">새글쓰기</a>
+{% endblock %}
