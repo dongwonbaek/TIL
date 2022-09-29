@@ -37,7 +37,7 @@
             <select class='form-select text-center' id="select" name="priority">
               <option value="1">1</option>
               <option value="2">2</option>
-              <option value="3">3</option>
+              <option value="3" selected>3</option>
               <option value="4">4</option>
               <option value="5">5</option>
             </select>
@@ -67,6 +67,16 @@
     <hr>
     {% for content in todos %}
     <div class="row d-flex align-items-center">
+      {% if content.completed %}
+      <del class="col-1 d-flex justify-content-center">{{ content.priority }}</del>
+      <del class="col-1 d-flex justify-content-center">
+        <a class="text-decoration-none text-dark" href="{% url 'todo:detail' content.id %}">{{ content.title }}</a>
+      </del>
+      <del class="col-3 d-flex justify-content-center">{{ content.content }}</del>
+      <del class="col-2 d-flex justify-content-center">{{ content.created_at }}</del>
+      <del class="col-2 d-flex justify-content-center">{{ content.deadline }}</del>
+      <del class="col-1 d-flex justify-content-center">{{ content.completed }}</del>
+      {% else %}
       <div class="col-1 d-flex justify-content-center">{{ content.priority }}</div>
       <div class="col-1 d-flex justify-content-center">
         <a class="text-decoration-none text-dark" href="{% url 'todo:detail' content.id %}">{{ content.title }}</a>
@@ -75,10 +85,28 @@
       <div class="col-2 d-flex justify-content-center">{{ content.created_at }}</div>
       <div class="col-2 d-flex justify-content-center">{{ content.deadline }}</div>
       <div class="col-1 d-flex justify-content-center">{{ content.completed }}</div>
-      <div class="col-1 d-flex justify-content-center"><a href="{% url 'todo:update' content.id %}"
-          class="btn btn-dark">변경</a></div>
-      <div class="col-1 d-flex justify-content-center"><a href="{% url 'todo:delete' content.id %}"
-          class="btn btn-dark">삭제</a></div>
+      {% endif %}
+      <div class="col-1 d-flex justify-content-center">
+        <a href="{% url 'todo:update' content.id %}" class="btn btn-dark">변경</a>
+      </div>
+      <div class="col-1 d-flex justify-content-center">
+        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          삭제
+        </button>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-body">
+                <p>정말 삭제하시겠습니까?</p>
+                <div class="float-end">
+                  <a href="{% url 'todo:delete' content.id %}" class="btn btn-dark">삭제</a>
+                  <button type="button" class="btn btn-dark" data-bs-dismiss="modal">돌아가기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <hr>
     {% endfor %}
