@@ -264,7 +264,7 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
     templates 폴더는 웹사이트를 구성하는 HTML 문서들이 저장되는 공간이다.
 
-    12번에서 index라는 함수가 index.html 문서를 반환하게 작성했으므로 templates 폴더에 index.html을 작성한다.
+    13번에서 index라는 함수가 index.html 문서를 반환하게 작성했으므로 templates 폴더에 index.html을 작성한다.
 
     
 
@@ -355,13 +355,83 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
 ~~~html
 <!-- base.html을 활용한 다른 html파일 -->
-{% extends '기준 템플릿.html' %}
+{% extends 'base.html' %}
 <!-- extends 는 템플릿 최상단 폴더를 기준으로 한다. -->
 {% block content %}
 	<h1>
         안녕하세요~
 	</h1>
-{% end block content %}
+{% endblock %}
 <!-- content는 다른 이름으로 대체할 수 있고 그렇기 때문에 여러 블럭을 지정할 수도 있다. -->
 ~~~
+
+
+
+#### URL 분할
+
+- 프로젝트 내 앱의 view 함수가 많아지면서 사용하는 path() 함수가 많아지고, 앱 또한 더 많이 작성되기 때문에 프로젝트의 urls.py에서 모두 관리하는 것은 프로젝트 유지보수에 좋지 않다.
+
+- 하나의 프로젝트에 여러 앱들이 존재한다면, 각각의 앱 안에 urls.py를 만들고 프로젝트 urls.py 에서 각 앱의 urls.py 파일로 URL 을 맵핑할 수 있음
+
+  ~~~python
+  # 앱 urls.py
+  from django.urls import path
+  from . import views 
+  # 현재 위치에 있는 views.py 파일을 참조한다.
+  
+  urlpatterns = [
+      path('index/', views.index),
+      path('greeting/', views.greeting),
+  ]
+  ~~~
+
+- 이 때 프로젝트 urls.py 내에는 path 와 같은 경로의 include 모듈을 import 해야 함
+
+  ~~~python
+  # 프로젝트 urls.py
+  from django.contrib import admin
+  from django.urls import path, include 
+  # include는 django.urls 파일에 내장되어있는 모듈이다.
+  
+  urlpatterns = [
+      path('admin/', admin.site.urls),
+      path('articles/', include('articles.urls')),
+      path('pages/', include('pages.urls')),
+  ]
+  ~~~
+
+- 프로젝트 urls에서 관리하던 path가 분리되었으므로, URL 주소 또한 바뀌게 됨.
+
+  `기존이 http://localhost:8000/index/ 였다면 현재는 http://localhost:8000/articles/index/`
+
+
+
+#### URL Namespace
+
+- path 함수 내에 name 속성을 추가하여 templates 에서 특정양식`{% url '[app_name]:[name]' %}`을 통해 호출할 수 있다.
+
+- 앱 urls.py 에 app_name 을 지정하여 여러 앱들 간에 혼동을 없앨 수 있고, 절대경로를 통해 유지보수 또한 편리해진다.
+
+  ~~~python
+  # articles/urls.py
+  from django.urls import path
+  from . import views
+  
+  app_name = 'articles'
+  urlpatterns = [
+      path('index/', views.index, name='index'),
+      path('greeting/', views.index, name='greeting'),
+      # name 속성에 활용할 절대변수를 할당한다.
+  ]
+  ~~~
+
+  ~~~html
+  <!-- articles/templates/index.html -->
+  {% block content %}
+  <h1>만나서 반가워요</h1>
+  <a href="{% url 'articles:greeting' %}">greeting</a>
+  {% endblock %}
+  ~~~
+
+  
 
