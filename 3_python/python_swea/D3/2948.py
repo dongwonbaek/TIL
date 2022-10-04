@@ -13,3 +13,4 @@ for _ in range(1, int(input()) + 1):
                 cnt += 1
                 break
     print(f"#{_} {cnt}")
+# 시간 초과

@@ -626,13 +626,13 @@ w의 첫 번째 위치를 반환, 없으면 오류 반환
 - 조합(Combination) : 순서 상관 없는 경우의 수
 
   ~~~python
-  list_ = ['A', 'B', 'C']
+  dataset = ['A', 'B', 'C']
   
-  printList = permutations(list_, 2)
-  print(result)
+  printList = combinations(dataset, 2)
+  print(printList)
   
   # 결과값
-  # [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')]
+  # [('A', 'B'), ('A', 'C'), ('B', 'C')]
   ~~~
 
   

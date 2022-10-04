@@ -135,27 +135,22 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
    ~~~bash
    $ source server-venv/Scripts/activate
-   ~~~
-
-
-
-3. **가상환경 종료**
-
-   ~~~bash
+   
+   # 가상환경 종료
    $ deactivate
    ~~~
 
    
 
-4. **장고 설치**
+3. **장고 설치**
 
    ~~~bash
    $ pip install django==3.2.13
    ~~~
    `버전 명시는 == , 장고의 가장 안정적인 버전이 3.2.13(LTS)버전`
-   
+
    `LTS (Long Term Support) : 장기 지원 버전`
-   
+
    ~~~bash
    # 현재 적용되어있는 pip 프로그램들의 이름을 requirements.txt라는 메모장에 저장하여 공유하기 쉽게 한다.
    $ pip freeze > requirements.txt
@@ -163,12 +158,12 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
    # 다음 명령어를 통해 적용할 수 있다. 이 때 requirements.txt 파일은 가상환경	(venv) 폴더 내에 있어야 한다.
    $ pip install -r requirements.txt
    ~~~
-   
 
 
 
 
-5. **프로젝트 생성**
+
+4. **프로젝트 생성**
 
    ~~~bash
    $ django-admin startproject [프로젝트이름] [시작경로]
@@ -179,7 +174,7 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
 
 
-6. **현재 폴더를 vs code로 오픈하여 확인**
+5. **현재 폴더를 vs code로 오픈하여 확인**
 
    ~~~bash
    $ code .
@@ -188,7 +183,7 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
 
 
-7. **장고 설치 시 생성된 manage.py를 실행하여 내 컴퓨터에만 존재하는 서버 실행**
+6. **장고 설치 시 생성된 manage.py를 실행하여 내 컴퓨터에만 존재하는 서버 실행**
 
    ~~~bash
    $ python manage.py runserver
@@ -198,13 +193,13 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
 
 
-8. **브라우저에 localhost:8000 입력**
+7. **브라우저에 localhost:8000 입력**
 
    장고에서 웹페이지를 성공적으로 생성했다는 페이지 출력
 
 
 
-9. **어플 생성**
+8. **어플 생성**
 
    ~~~bash
    $ python manage.py startapp articles
@@ -212,13 +207,13 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
    
 
-10. **어플 등록**
+9. **어플 등록**
 
     프로젝트폴더 안에 settings.py 안에 INSTALLED_APPS 라는 이름의 리스트 안에 최상단에 어플 폴더를 넣는다. ('articles' ,<-- 이렇게 넣는다.)
 
     
 
-11. **요청과 응답 설계**
+10. **요청과 응답 설계**
 
     1. 주문서 정의 (urls.py)
     2. 로직 구현 (views.py)
@@ -226,7 +221,7 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
     
 
-12. **URL 선언**
+11. **URL 선언**
 
     urls.py 파일의 ulrpatterns 라는 리스트에 path('index/', views.index), 를 추가한다.
 
@@ -242,7 +237,7 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
 ​    
 
-13. **views.py 파일에서 어떤 내용을 불러올 것인지에 대한 정보를 삽입**
+12. **views.py 파일에서 어떤 내용을 불러올 것인지에 대한 정보를 삽입**
 
     ~~~python
     # views.py
@@ -260,7 +255,7 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
     
     
 
-14. **앱 내부에 templates 폴더 생성 (templates 이름은 변경하지 않는다.)**
+13. **앱 내부에 templates 폴더 생성 (templates 이름은 변경하지 않는다.)**
 
     templates 폴더는 웹사이트를 구성하는 HTML 문서들이 저장되는 공간이다.
 
@@ -268,7 +263,7 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 
     
 
-15. **html에서 파이썬 활용하기 (Django 한정)**
+14. **html에서 파이썬 활용하기 (Django 한정)**
     
     ~~~html
     <body>
@@ -365,6 +360,26 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
 <!-- content는 다른 이름으로 대체할 수 있고 그렇기 때문에 여러 블럭을 지정할 수도 있다. -->
 ~~~
 
+~~~python
+# pjt/settings.py
+# 기본 템플릿양식 경로 설정
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"], # 기본 템플릿 양식의 위치를 알려준다.
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+~~~
+
 
 
 #### URL 분할
@@ -433,5 +448,152 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
   {% endblock %}
   ~~~
 
-  
+
+
+
+
+
+POST
+
+- form 태그 뒤 method 의 기본값은 GET이다.
+- POST로 변경하면 form 태그의 역할이 바뀌게 된다.
+- GET은 조회하기 위해 조회대상의 정보를 URL에 담아 전송했다면, POST는 데이터베이스에 등록하기 위해 등록할 정보를 메시지에 담아 전송한다.
+- POST를 활용하기 위해서는 반드시 form 태그 내부에 {% csrf_token %} 을 추가해야함(보안 유지)
+
+
+
+하나의 메서드에 두 가지 기능을 추가하기.
+
+if 문으로 method가 post냐 get이냐 를 판별하고 기능을 각자 작성한다.
+
+유효성 검사에서 탈락할 경우 상황도 생각해야 함
+
+
+
+### ModelForm
+
+- 사용자가 입력한 값이 DB의 데이터 형식과 일치하는지를 확인하는 유효성 검증이 반드시 필요하며 이는 서버 사이드에서 반드시 처리해야 함
+- ModelForm은 Model에 정의된 필드에 맞춰
+  - UI를 자동으로 그려주고
+  - 유효성을 검사하고
+  - DB에 저장한다.
+- ModelForm은 Form과 똑같은 방식으로 View함수에서 사용
+
+
+
+#### ModelForm 선언
+
+~~~python
+# articles/forms.py
+from django import forms # forms 라이브러리의 ModelForm 클래스를 상속받음
+from .models import Article 
+
+class ArticleForm(forms.ModelForm):
+    
+    
+    class Meta: 			# 정의한 ModelForm 클래스 안에 Meta 클래스를 선언
+        model = Article 	# ModelForm이 참조할 모델을 정의       
+        fields = '__all__' 	# __all__을 활용하여 참조할 모델의 모든 필드를 포함할 수 있음
+      #	fields = ['title', 'content']	# 또는 원하는 필드만 선택할 수도 있음
+	  #	exlclude = ('title',) 	# exclude 속성을 사용하여 모델에서 포함하지 않을 필드를 지정가능
+~~~
+
+#### ModelForm 활용
+
+~~~python
+# articles/views.py
+from .forms import ArticleForm
+
+def new(request):
+    form = ArticleForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'articles/new.html', context)
+	# ModelForm 객체를 context에 담아서 전달
+~~~
+
+~~~html
+<!-- articles/new.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>NEW</h1>
+<form action="{% url 'articles:create' %}" method="POST">
+    {% csrf_token %}	<!-- 유효성 검사 -->
+    {{ form.as_p }}		<!-- context로 전달받은 객체를 어떤 방식(as_p)으로 출력할 것인지 표현 -->
+    <input type="submit">
+</form>
+{% endblock content %}
+~~~
+
+##### label 과 input 쌍에 대한 3가지 출력 옵션
+
+- as_p 
+  - 각 필드가 단락(p 태그)으로 감싸져서 랜더링
+- as_ul
+  - 각 필드가 목록(li 태그)으로 감싸져서 랜더링
+  - ul 태그는 직접 작성해야 함
+- as_table
+  - 각 필드가 테이블(tr 태그) 행으로 감싸져서 랜더링
+
+
+
+#### 기능 합치기(Create, Update)
+
+- Create
+
+~~~python
+# articles/views.py
+from django.shortcuts import render, redirect
+from .forms import ArticleForm # 유효성 검사를 위해 선언했던 ModelForm 참조
+
+def create(request):
+    if request.method == 'POST':	# 만약 request로 날라온 요청(내용이 담긴)이 POST 방식이라면,
+        form = ArticleForm(request.POST)	# 그 내용을 ModelForm에 담고,
+        if form.is_valid():			# 유효성 검사에 통과하면,
+            article = form.save()	# 그 내용을 DB에 반영하고,
+            return redirect('articles:detail', article.pk) # detail로 바로 연결(pk를 담아서)
+        # 만약 유효하지 않다면? 저장되지 않고 아무일도 일어나지 않음.
+        
+    else:							# 요청방식이 POST가 아나라 GET 이라면?
+        form = ArticleForm()		
+	context = {						# 유효성 검사에 통과하지 못했을 경우 여기로 점프하여 에러메시지가 담긴 form을 할당
+        'form': form,
+    }
+    return render(request, 'articles/create.html', context)	# 에러메시지와 함께 create.html을 재출력
+~~~
+
+
+
+- Update (edit 기능과 합치기)
+
+~~~python
+# articles/views.py
+from django.shortcuts import render, redirect
+from article.models import Article
+from .forms import ArticleForm 	# 유효성 검사를 위해 선언했던 ModelForm 참조
+
+def update(request, pk):
+	article = Article.objects.get(pk=pk) 	# Update(편집)는 instance에 사용할 객체를 미리 할당하는 것이 좋다.
+	if request.method == 'POST':			# 만약 날라온 요청이 POST 방식이라면, 날라온 데이터를 검사한다.
+		form = ArticleForm(request.POST, instance=article) 
+        # instance가 없다면 새로 생성, 있으면 덮어씌운다.
+        # instance는 수정대상이 되는 객체를 지정한다. article을 미리 할당한 이유이다.
+		if form.is_valid():					# 유효성 검사에 통과하면,
+			form.save()						# DB에 저장하고,
+			return redirect('articles:detail', article.pk) # detail로 바로 연결
+    else:									 
+    	form = ArticleForm(instance=article) 
+        # update 페이지에는 input값이 기존에 있던 데이터로 채워져 있어야 한다.(수정이 용이하도록)
+        # 모델 폼의 속성으로 instance 값을 추가하면 인풋값에도 자동으로 기존 값들이 채워진다.
+	context = {
+		'form': form,
+		'article': article,
+	}
+	return render(request, 'articles/update.html', context) 
+    # 날라온 요청이 GET 방식이면 update.html을 출력하고, 
+    # POST 방식으로 온 요청값이 유효성 검사에 통과하지 못한다면, 아무일도 일어나지 않고, 
+    # 에러 메시지와 함께 다시 update.html을 출력한다.
+~~~
 
