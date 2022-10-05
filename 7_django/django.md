@@ -313,7 +313,7 @@ DNS 는 브라우저에 입력하는 웹 주소(google.com)를 실제 (IP) 주�
         context = {
             'name': name,
         }
-        return render(request, 'hello.hetml', context)
+        return render(request, 'hello.html', context)
    ~~~
 
    ~~~html
@@ -410,7 +410,7 @@ TEMPLATES = [
   
   urlpatterns = [
       path('admin/', admin.site.urls),
-      path('articles/', include('articles.urls')),
+      path('articles/', include('articles.urls')), # 모듈 : 앱이름.urls
       path('pages/', include('pages.urls')),
   ]
   ~~~
@@ -461,12 +461,6 @@ POST
 - POST를 활용하기 위해서는 반드시 form 태그 내부에 {% csrf_token %} 을 추가해야함(보안 유지)
 
 
-
-하나의 메서드에 두 가지 기능을 추가하기.
-
-if 문으로 method가 post냐 get이냐 를 판별하고 기능을 각자 작성한다.
-
-유효성 검사에서 탈락할 경우 상황도 생각해야 함
 
 
 
@@ -520,12 +514,15 @@ def new(request):
 {% block content %}
 <h1>NEW</h1>
 <form action="{% url 'articles:create' %}" method="POST">
-    {% csrf_token %}	<!-- 유효성 검사 -->
+    {% csrf_token %}	<!-- 유효성 검사(프론트 사이드) -->
     {{ form.as_p }}		<!-- context로 전달받은 객체를 어떤 방식(as_p)으로 출력할 것인지 표현 -->
     <input type="submit">
 </form>
 {% endblock content %}
 ~~~
+`form 태그의 action 속성에 아무것도 넣지 않으면 자기 자신으로 보내게 됨`
+
+
 
 ##### label 과 input 쌍에 대한 3가지 출력 옵션
 
@@ -557,7 +554,7 @@ def create(request):
         # 만약 유효하지 않다면? 저장되지 않고 아무일도 일어나지 않음.
         
     else:							# 요청방식이 POST가 아나라 GET 이라면?
-        form = ArticleForm()		
+        form = ArticleForm()		# ModelForm 양식을 건내주기 위해 할당
 	context = {						# 유효성 검사에 통과하지 못했을 경우 여기로 점프하여 에러메시지가 담긴 form을 할당
         'form': form,
     }
@@ -566,7 +563,8 @@ def create(request):
 
 
 
-- Update (edit 기능과 합치기)
+- Update (edit 기능과 합치기) :
+  - 정확히는 views.py 의 update 함수와 edit 함수를 **form태그의 요청방식(GET or POST)**에 따라 다르게 작동하는 함수로 합치는 것
 
 ~~~python
 # articles/views.py
@@ -575,8 +573,10 @@ from article.models import Article
 from .forms import ArticleForm 	# 유효성 검사를 위해 선언했던 ModelForm 참조
 
 def update(request, pk):
-	article = Article.objects.get(pk=pk) 	# Update(편집)는 instance에 사용할 객체를 미리 할당하는 것이 좋다.
-	if request.method == 'POST':			# 만약 날라온 요청이 POST 방식이라면, 날라온 데이터를 검사한다.
+	article = Article.objects.get(pk=pk) 	
+    # Update(편집)는 instance에 사용할 객체를 미리 할당한다.
+	if request.method == 'POST':			
+    # 만약 날라온 요청이 POST 방식이라면, 날라온 데이터의 유효성을 검사한다.
 		form = ArticleForm(request.POST, instance=article) 
         # instance가 없다면 새로 생성, 있으면 덮어씌운다.
         # instance는 수정대상이 되는 객체를 지정한다. article을 미리 할당한 이유이다.
@@ -588,12 +588,133 @@ def update(request, pk):
         # update 페이지에는 input값이 기존에 있던 데이터로 채워져 있어야 한다.(수정이 용이하도록)
         # 모델 폼의 속성으로 instance 값을 추가하면 인풋값에도 자동으로 기존 값들이 채워진다.
 	context = {
-		'form': form,
-		'article': article,
+		'form': form,		# form 태그 구성을 위해 인자로 넘기기
+		'article': article,	# article의 pk를 넘기기 위해 넘기기
 	}
 	return render(request, 'articles/update.html', context) 
     # 날라온 요청이 GET 방식이면 update.html을 출력하고, 
     # POST 방식으로 온 요청값이 유효성 검사에 통과하지 못한다면, 아무일도 일어나지 않고, 
     # 에러 메시지와 함께 다시 update.html을 출력한다.
 ~~~
+
+
+
+#### Admin site (Django 관리자 기능)
+
+- Django 에는 관리자 페이지를 간단하게 작성할 수 있는 강력한 도구가 내장되어있음.
+- 관리자 페이지는 사용자가 아닌 서버의 관리자가 활용하기 위한 페이지임.
+- models.py에 있는 class를 admin.py에 등록하는 방식으로 데이터베이스를 관리함.
+- 레코드 생성 여부 확인에 매우 유용하며 직접 레코드를 삽입할 수도 있음.
+
+
+
+##### Admin site 시작 순서
+
+1. admin 계정 생성
+
+   ~~~bash
+   $ python manage.py createsuperuser
+   # Username, Password는 필수, email은 선택사항
+   # 비밀번호 생성시 보안상 터미널에 출력되지 않으나 실제로는 입력됨.
+   ~~~
+
+2. admin 에 모델 클래스 등록
+
+   모델의 record를 모기 위해서는 admin.py 에 보고자 하는 class를 등록해야 함
+
+   ~~~python
+   # articles/admin.py
+   from django.contrib import admin
+   from .models import Article
+   
+   admin.site.register(Article) # 관리하고자하는 class를 import하여 다음과 같이 추가
+   ~~~
+
+3. http://localhost:8000/admin/ 으로 접속 후 로그인 (서버실행 후)
+
+
+
+#### Static files (정적 파일 관리하기)
+
+##### 정적파일이란?
+
+- 응답할 때 별도의 처리 없이 파일 내용을 그대로 보여주면 되는 파일(요청에 따라 내용이 바뀌지 않음)
+
+- 웹 서버는 일반적으로, 이미지, JS, CSS와 같은 준비된 정적파일을 제공할 수 있어야 함.
+
+- Django에서는 settings.py 의 INSTALLED_APPS 에 django.contrib.staticfiles 을 기본적으로 추가하고 관리할 수 있게 지원함.
+
+- 앱의 하위 폴더에 static 폴더를 생성하여 관리할 수 있음
+
+- templates 폴더와 마찬가지로 여러 앱의 static 폴더들은 모두 모아져 관리됨. 
+
+  그러므로 templates와 같이 static 폴더 내에도 앱별로 구분할 수 있게 폴더를 따로 구성하는 것이 좋음.
+
+  경로 예시 ) `article/static/article/example.jpg`
+
+- 템플릿에서 static 템플릿 태그를 사용하여 지정된 상대경로에 대한 URL을 설정
+
+  ~~~html
+  {% load static %}
+  <img src="{% static 'my_app/example.jpg' %}" alt="My image">
+  ~~~
+
+  
+
+#### Django ModelForm 에서 bootstrap 활용하기
+
+Django ModelForm 은 유효성 검사를 위한 도구이지만, 주어진 form 양식을 활용해야 했음.
+
+~~~html
+<form action="" method="POST">
+  {% csrf_token %}
+  {{ article.as_p }}  	<!-- 인풋박스가 안이쁨 -->
+  <input type="submit">
+  <a href="{% url 'article:detail' article.pk %}">돌아가기</a>
+</form>
+~~~
+
+##### bootstrap form으로 적용하기
+
+1. 가상환경에서 django-bootstrap5 설치
+
+   ~~~bash
+   $ pip install django-bootstrap5
+   ~~~
+
+2. settings.py 의 INSTALLED_APPS 에 설치한 bootstrap 앱 등록
+
+   ~~~python
+   INSTALLED_APPS = [
+       'article',
+       'django_bootstrap5' 		# 부트스트랩 버전마다 앱 이름이 달라질 수 있음! 검색요망
+       'django.contrib.admin',
+       'django.contrib.auth',
+       'django.contrib.contenttypes',
+       'django.contrib.sessions',
+       'django.contrib.messages',
+       'django.contrib.staticfiles',
+   ]
+   ~~~
+
+3. 템플릿에서 bootstrap load하고 사용
+
+   ~~~html
+   {% extends 'base.html' %}
+   {% block content %}
+   {% load django_bootstrap5 %}		<!-- 모듈 호출 -->
+   <div class="m-3">
+     <form action="" method="POST">
+       {% csrf_token %}
+       {% bootstrap_form article %}	
+   	<!-- boostrap_form 은 고정, article은 context로 넘겨받은 인자임 -->
+   	{% bootstrap_button button_type="submit" content="OK" %}
+   	{% bootstrap_button button_type="reset" content="Cancel" %}
+   	<!-- form뿐만 아니라 버튼도 구현가능 -->
+     </form>
+   </div>
+   {% endblock %}
+   ~~~
+
+   
 
