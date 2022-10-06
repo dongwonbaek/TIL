@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class='container my-5'>
+    <div class='d-flex justify-content-between mb-5'>
+      <h1>{{ movie.title }}</h1>
+      <span class='text-end m-0'>{{ movie.running_time }}분</span>
+    </div>
+    <p>{{ movie.summary }}</p>
+    <div class='float-end'>
+      <div class='d-flex'>
+        <a class='btn btn-dark mx-1' href="{% url 'movie:update' movie.pk %}">수정</a>
+        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          삭제
+        </button>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-body">
+                <h4 class='fw-bold'>정말 삭제하시겠습니까?</h4>
+                <div class='float-end'>
+                  <div class='d-flex'>
+                    <form action="{% url 'movie:delete' movie.pk %}" method='POST'>
+                      {% csrf_token %}
+                      <input type="submit" class="btn btn-dark" value='삭제'>
+                    </form>
+                    <button type="button" class="btn btn-dark mx-2" data-bs-dismiss="modal">닫기</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1 class='text-center my-3 fw-bold'>영화 정보</h1>
+  <div class='container py-3'>
+    <div class='row'>
+      <div class='col-2'>
+        <h5 class='fw-bold text-center'>pk</h5>
+      </div>
+      <div class='col-10'>
+        <h5 class='fw-bold text-center'>영화제목</h5>
+      </div>
+    </div>
+    <hr>
+    {% for movie in movies %}
+      <div class='row'>
+        <div class='col-2 text-center'>
+          {{ movie.pk }}
+        </div>
+        <div class='col-10 text-center'>
+          <a class='text-decoration-none text-dark' href="{% url 'movie:detail' movie.pk %}">{{ movie.title }}</a>
+        </div>
+      </div>
+      <hr>
+    {% endfor %}
+  </div>
+{% endblock content %}
