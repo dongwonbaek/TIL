@@ -490,6 +490,7 @@ class ArticleForm(forms.ModelForm):
         fields = '__all__' 	# __all__을 활용하여 참조할 모델의 모든 필드를 포함할 수 있음
       #	fields = ['title', 'content']	# 또는 원하는 필드만 선택할 수도 있음
 	  #	exlclude = ('title',) 	# exclude 속성을 사용하여 모델에서 포함하지 않을 필드를 지정가능
+      ** # fields = '__all__' 과 exclude 를 조합해서 사용하는 것이 보안상 안전하다고 한다.
 ~~~
 
 #### ModelForm 활용
@@ -642,7 +643,7 @@ def update(request, pk):
 
 - 웹 서버는 일반적으로, 이미지, JS, CSS와 같은 준비된 정적파일을 제공할 수 있어야 함.
 
-- Django에서는 settings.py 의 INSTALLED_APPS 에 django.contrib.staticfiles 을 기본적으로 추가하고 관리할 수 있게 지원함.
+- Django에서는 settings.py 의 INSTALLED_APPS 에 django.contrib.staticfiles 이 기본적으로 존재하여 정적파일들을 관리할 수 있게 지원함.
 
 - 앱의 하위 폴더에 static 폴더를 생성하여 관리할 수 있음
 
@@ -663,7 +664,7 @@ def update(request, pk):
 
 #### Django ModelForm 에서 bootstrap 활용하기
 
-Django ModelForm 은 유효성 검사를 위한 도구이지만, 주어진 form 양식을 활용해야 했음.
+Django ModelForm 은 유효성 검사를 위한 도구이지만, 주어진 form 양식을 활용해야 해서 딱딱한 디자인을 가지고 있음. 하지만 bootstrap form을 적용하면 좀 더 부드러운 양식으로 변경할 수 있음.
 
 ~~~html
 <form action="" method="POST">
@@ -707,10 +708,10 @@ Django ModelForm 은 유효성 검사를 위한 도구이지만, 주어진 form 
      <form action="" method="POST">
        {% csrf_token %}
        {% bootstrap_form article %}	
-   	<!-- boostrap_form 은 고정, article은 context로 넘겨받은 인자임 -->
+   	<!-- boostrap_form 은 고정, article은 context로 넘겨받은 ModelForm 인자임 -->
    	{% bootstrap_button button_type="submit" content="OK" %}
    	{% bootstrap_button button_type="reset" content="Cancel" %}
-   	<!-- form뿐만 아니라 버튼도 구현가능 -->
+   	<!-- form뿐만 아니라 버튼도 구현가능하지만 사실 기존방식으로 구현하는 것이 편하다. -->
      </form>
    </div>
    {% endblock %}
