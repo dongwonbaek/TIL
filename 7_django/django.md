@@ -1,5 +1,3 @@
-# Django
-
 #### Framework 란?
 
 다양한 개발에 사용되는 코드 부분들을 재사용할 수 있게 좋은 구조의 코드로 만들어 두고, 그러한 코드들을 모아 놓은 것, 즉 서비스 개발에 필요한 기능들을 미리 구현해서 모아 놓은 것이다.
@@ -717,5 +715,148 @@ Django ModelForm 은 유효성 검사를 위한 도구이지만, 주어진 form 
    {% endblock %}
    ~~~
 
+
+
+#### Request 관련 메서드
+
+- request.resolver_match.url_name
+
+  - request의 name 속성을 출력한다.
+
+    ~~~python
+    # urls.py
+    path('<int:pk>/delete/', views.delete, name='delete')
+    >>> request.resolver_match.url_name
+    output = 'delete'
+    # 템플릿 내에서 활용할 수 있다.
+    ~~~
+
+
+
+### Django Auth(회원가입 기능)
+
+1. **accounts 앱 생성 및 등록**
+
+   ~~~bash
+   $ python manage.py startapp accounts
+   
+   # settings.py 의 INSTALLED_APPS 에 accounts 추가
+   ~~~
+
+2. **accounts/urls.py 분리**
+
+3. **accounts/models.py 에 다음 내용 추가**
+
+   ~~~python 
+   from django.contrib.auth.models import AbstractUser
+   
+   class User(AbstractUser):	
+       pass
+   # Django에서 이미 활용되고 있는 AbstractUser를 상속받아 새로운 User 객체를 생성
+   # 상속받아서 새롭게 만드는 이유는 커스텀 User모델은 기본 User모델과 동일하게 작동하면서도 
+   # 필요할 때 맞춤설정할 수 있기 때문임
+   # 단, 이 작업은 프로젝트의 모든 migrations 혹은 첫 migrate를 실행하기 전에 마쳐야 함
+   ~~~
+
+4. **settings.py 에 다음 내용 추가**
+
+   ~~~python
+   AUTH_USER_MODEL = 'accounts.User'
+   # accounts앱의 User객체가 사용자관리에 사용될 기본 모델이라는 뜻
+   ~~~
+   
+5. **accounts/admin.py 에 커스텀 User 모델을 등록**
+
+   ~~~python
+   from django.contrib import admin
+   from django.contrib.auth.admin import UserAdmin
+   from django.contrib.auth import get_user_model
+   
+   admin.site.register(get_user_model(), UserAdmin)
+   # get_user_model() 함수는 현재 활성화된 모델, 즉 위의 4번에서 진행된 AUTH_USER_MODEL 의 값을 가져온다. 반드시 from django.contrib.auth import get_user_model 로 참조해야 한다.
+   ~~~
+
+6. **accounts/forms.py 생성**
+
+   ~~~python
+   from django.contrib.auth.forms import UserCreationForm
+   from django.contrib.auth import get_user_model
+   
+   class CustomUserCreationForm(UserCreationForm):
+   # 사용자생성을 위해 Django에서는 기본적으로 UserCreationForm이라는 입력 Form을 지원한다.
+   # 하지만 UserCreationForm은 기본지원대상이 User객체이지만 
+   # 우리가 사용하는 User객체는 3번의 내용에서 정의했듯이 새롭게 커스텀된 User객체이기 때문에 사용할 수 없다. 
+   # 그러므로 User객체를 커스텀한 것과 같이 UserCreationForm 또한 새롭게 커스텀하여 사용해야 한다.
+       class Meta:
+        model = get_user_model() 
+           # settings.py 에서 AUTH_USER_MODEL로 정의한 커스텀된 User객체가 들어온다.
+           fields = ['username', 'email']
+   ~~~
+   
+7. **accounts/templates/accounts/signup.html 생성 및 작성**
+
+8. **accounts/views.py 작성**
+
+   ~~~python
+   from django.shortcuts import render, redirect
+   from .forms import CustomUserCreationForm
+   from .models import User
+   
+   def signup(request):
+       if request.method == 'POST':
+           form = CustomUserCreationForm(request.POST)
+           if form.is_valid():
+               form.save()
+               return redirect('accounts:index')
+       else:
+           form = CustomUserCreationForm()
+       context = {
+           'form':form,
+       }
+       return render(request, 'accounts/signup.html', context)
+   # 게시판 작성과 거의 유사하다.
+   ~~~
+
    
 
+
+
+#### **기본 User 객체에서 정의된 메서드**
+
+- create_user() : 암호화된 유저 생성
+
+  ~~~python
+  User.objects.create_user('아이디', '이메일', '비밀번호')
+  # SHA-256 방식의 비밀번호 암호화를 통해 회원정보를 생성하여 User DB에 저장한다는 메서드이다.
+  # 반환값은 생성된 유저객체이다.
+  ~~~
+
+  `SHA-256 암호화 방식은 단방향 해시함수를 활용한 암호화 방식으로 우리가 입력한 비밀번호를 단방향 해시함수에 입력값으로 넣어 다이제스트로 암호화하며 이 때 출력된 값을 가지고 입력값을 추출하는 복호화가 불가능함.`
+
+  ` 하지만 단방향 해시함수의 경우 레인보우 공격과 무차별 대입 공격 등으로 문제가 발생할 수 있는데, 이를 보완하기 위해서 솔팅(salting) 방식과 키 스트레칭(Key Stretching) 방식을 추가적으로 활용함`
+
+  `솔팅(Salting) : 패스워드에 임의의 문자열은 추가하여 해시함수에 입력`
+
+  `키 스트레칭(Key Stretching) : 해시함수에 대입 후 출력값을 또 다시 해시함수에 넣는 과정을 반복 `
+
+  
+
+- set_password() : 비밀번호 변경
+
+  ~~~python
+  user = User.objects.get(pk=2)
+  user.set_password('new password')
+  user.save()
+  ~~~
+
+  
+
+- authenticate() : 인증
+
+  ~~~python
+  from django.contrib.auth import authenticate
+  user = authenticate(username='john', password='secret')
+  # 비밀번호가 틀리면 유저 객체를 반환하지 않는다.
+  ~~~
+
+  
