@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+{% block content %}
+  <div class='position-fixed top-0 end-0 m-5'>
+    <a class='btn btn-outline-dark' href="{% url 'accounts:signup' %}">Sign Up</a>
+  </div>
+  <div class='container my-5'>
+    <div class="row text-center">
+      <div class="col-2 fw-bold fs-4">
+        PK
+      </div>
+      <div class="col-5 fw-bold fs-4">
+        Username
+      </div>
+      <div class="col-5 fw-bold fs-4">
+        E-mail
+      </div>
+    </div>
+    <hr>
+    {% for user in users %}
+      <div class='row text-center'>
+        <div class='col-2'>
+          {{ user.pk }}
+        </div>
+        <div class='col-5'>
+          <a class='text-decoration-none' href="{% url 'accounts:detail' user.pk %}">{{ user.username }}</a>
+        </div>
+        <div class='col-5'>
+          {{ user.email }}
+        </div>
+      </div>
+      <hr>
+    {% endfor %}
+  </div>
+{% endblock content %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+{% block content %}
+  <div class='container my-5'>
+    <h1 class='py-5 fw-bold'>회원 정보</h1>
+    <div class='row my-2'>
+      <div class='col-2'>
+        pk :
+      </div>
+      <div class='col-10 fw-bold'>{{ user.pk }}</div>
+    </div>
+    <div class='row my-2'>
+      <div class='col-2'>
+        User Name :
+      </div>
+      <div class='col-10 fw-bold'>{{ user.username }}</div>
+    </div>
+    <div class='row my-2'>
+      <div class='col-2'>
+        E-mail :
+      </div>
+      <div class='col-10 fw-bold'>{{ user.email }}</div>
+    </div>
+    <a class='btn btn-outline-dark float-end' href="{% url 'accounts:index' %}">돌아가기</a>
+  </div>
+
+{% endblock content %}
