@@ -733,16 +733,19 @@ Django ModelForm 은 유효성 검사를 위한 도구이지만, 주어진 form 
 
 
 
-### Django Auth(회원가입 기능)
+
+
+### Django Auth
+
+#### 회원가입
 
 1. **accounts 앱 생성 및 등록**
 
    ~~~bash
    $ python manage.py startapp accounts
-   
    # settings.py 의 INSTALLED_APPS 에 accounts 추가
    ~~~
-
+   
 2. **accounts/urls.py 분리**
 
 3. **accounts/models.py 에 다음 내용 추가**
@@ -763,6 +766,7 @@ Django ModelForm 은 유효성 검사를 위한 도구이지만, 주어진 form 
    ~~~python
    AUTH_USER_MODEL = 'accounts.User'
    # accounts앱의 User객체가 사용자관리에 사용될 기본 모델이라는 뜻
+   # 이 내용은 무조건 첫 마이그레이션 전에 작성되어야 한다. (보안적인 이슈가 있을 수 있기 때문이다.)
    ~~~
    
 5. **accounts/admin.py 에 커스텀 User 모델을 등록**
@@ -783,7 +787,8 @@ Django ModelForm 은 유효성 검사를 위한 도구이지만, 주어진 form 
    from django.contrib.auth import get_user_model
    
    class CustomUserCreationForm(UserCreationForm):
-   # 사용자생성을 위해 Django에서는 기본적으로 UserCreationForm이라는 입력 Form을 지원한다.
+   # 사용자생성을 위해 Django에서는 기본적으로 UserCreationForm이라는 입력 Form을 지원한다. 
+   # (UserCreationForm은 ModelForm을 상속 받아서 만들고 있음)
    # 하지만 UserCreationForm은 기본지원대상이 User객체이지만 
    # 우리가 사용하는 User객체는 3번의 내용에서 정의했듯이 새롭게 커스텀된 User객체이기 때문에 사용할 수 없다. 
    # 그러므로 User객체를 커스텀한 것과 같이 UserCreationForm 또한 새롭게 커스텀하여 사용해야 한다.
@@ -817,9 +822,7 @@ Django ModelForm 은 유효성 검사를 위한 도구이지만, 주어진 form 
    # 게시판 작성과 거의 유사하다.
    ~~~
 
-   
-
-
+   `변경 가능한 것은 변수화하는 것이 좋다.`
 
 #### **기본 User 객체에서 정의된 메서드**
 
@@ -860,3 +863,116 @@ Django ModelForm 은 유효성 검사를 위한 도구이지만, 주어진 form 
   ~~~
 
   
+
+#### 로그인 로직
+
+쿠키 = 장바구니
+
+- URL : GET / accounts/ login /
+  - 처리 : 사용자에게 From을 제공한다.
+- URL : POST / accounts / login /
+  - 처리 : 로그인 로직처리 
+    - 사용자인지 확인하고, django_session 테이블에 저장, 쿠키 주기
+  - (성공) 게시글 목록 페이지로 redirect
+  - (실패) 로그인 Form
+
+
+
+
+
+#### 회원가입 및 로그인 views.py 구성
+
+~~~python
+# accounts/views.py
+from django.shortcuts import render, redirect
+from .forms import CustomUserCreationForm
+from .models import User
+from django.contrib.auth import login as auth_login 	# login 이름이 겹치기 때문에 바꿔줌
+from django.contrib.auth import logout as auth_logout 	# login 이름이 겹치기 때문에 바꿔줌
+from django.contrib.auth.forms import AuthenticationForm
+
+def signup(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()					# save()의 리턴값은 해당 모델의 인스턴스이다.
+            auth_login(request, user)			# 유효한 요청이 들어왔으면 요청대로 저장하고 가입된 정보로 바로 로그인한다.
+            return redirect('accounts:index')	
+    else:
+        form = CustomUserCreationForm()
+    context = {
+        'form':form,
+    }
+    return render(request, 'accounts/signup.html', context)
+
+def login(request):
+    if request.method == 'POST':
+    form = AuthenticationForm(request, data=request.POST)
+    # AuthenticationForm 는 ModelForm이 아니라 일반 Form을 상속받는다. 그래서 위의 양식이 조금 달라짐.
+    if form.is_valid(): 	# ModelForm이나 일반 Form이나 is_valid()로 유효성 검증이 가능하다.
+        auth_login(request, form.get_user())	# 세션에 저장 (로그인)
+        return redirect(request.GET.get('next') or 'accounts:index') 
+    	# 파이썬의 단축평가 : redirect(A or B) 일 때 A가 참이면 A를 선택, A가 거짓이고 B가 참이면 B를 선택한다.
+        # A가 참일 경우 B의 참거짓 여부는 고려하지 않고 A를 선택하게 된다.
+        # @login_required가 붙은 함수들에 의해서 login함수에 도달했다면, 
+        # 그 위치를 기억했다가 로그인이 완료되고나서 다시 그 위치로 보내주는 역할을 한다.
+    else:
+        form = AuthenticationForm()
+	context = {
+        'form':form
+    }
+    return render(request, 'accounts/login.html', context)
+~~~
+
+
+
+#### 로그인 여부에 따른 템플릿 분기
+
+~~~html
+<!-- templates/base.html -->
+{% if request.user.is_authenticated %}	
+<!-- is_authenticated 는 request의 속성들 중 하나이고 로그인여부에 따라 True나 False값을 가지게 된다. -->
+	<p>{{ request.user }}님 환영합니다!</p>
+<!-- {{ request.user }}는 따로 설정없이도 현재 로그인된 username을 출력한다. -->
+{% endif %}
+{% if request.user.is_authenticated %}
+    <a href="{% url 'accounts:index' %}">회원목록</a>
+    <a href="{% url 'accounts:logout' %}">로그아웃</a>
+{% else %}
+    <a href="{% url 'accounts:signup' %}">회원가입</a>
+    <a href="{% url 'accounts:login' %}">로그인</a>
+{% endif %}
+~~~
+
+
+
+#### 로그인 여부에 따른 접근 제한 설정
+
+~~~python
+# articles/views.py
+from django.shortcuts import render, redirect
+from .forms import ArticleForm
+from .models import Article
+from django.contrib.auth.decorators import login_required	# login_required는 decorators에서 가져온다.
+
+@login_required	 	# @login_required 밑에 붙어있는 함수에 로그인을 하지않고 접근하게 되면 로그인 창으로 보내지게 된다.
+def create(request):
+    if request.method == "POST":
+        article = ArticleForm(request.POST)
+        if article.is_valid:
+            article.save()
+            return redirect("article:index")
+    else:
+        article = ArticleForm()
+    context = {
+        "article": article,
+    }
+    return render(request, "article/create.html", context)
+~~~
+
+
+
+#### github-flow 규칙
+
+1. 깃헙의 콜라보레이터에서 협업자들을 추가한다. 협업자들은 함께 작업할 저장소를 클론하여 로컬로 옮긴다.
+2. master(main) 브랜치에서 새로운 브랜치(토픽, topic)를 만들고 변경. - 상세하게 작성한다. git branch accounts, master에서는 절대 개발해선 안된다. 브랜치만들고 거기서 개발해야함 git switch master -> master브랜치로 이동
