@@ -888,7 +888,6 @@ from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm
 from .models import User
 from django.contrib.auth import login as auth_login 	# login 이름이 겹치기 때문에 바꿔줌
-from django.contrib.auth import logout as auth_logout 	# login 이름이 겹치기 때문에 바꿔줌
 from django.contrib.auth.forms import AuthenticationForm
 
 def signup(request):
@@ -955,7 +954,7 @@ from .forms import ArticleForm
 from .models import Article
 from django.contrib.auth.decorators import login_required	# login_required는 decorators에서 가져온다.
 
-@login_required	 	# @login_required 밑에 붙어있는 함수에 로그인을 하지않고 접근하게 되면 로그인 창으로 보내지게 된다.
+@login_required	 	# @login_required가 붙어있는 함수에 로그인을 하지않고 접근하게 되면 로그인 창으로 보내지게 된다.
 def create(request):
     if request.method == "POST":
         article = ArticleForm(request.POST)
@@ -970,9 +969,98 @@ def create(request):
     return render(request, "article/create.html", context)
 ~~~
 
+#### `어떻게 login_required 함수는 별도의 경로설정없이 로그인 창으로 보낼 수 있는 것일까?`
+
+`django의 공식문서를 살펴보면, login_required가 적용된 함수에 로그인되지 않은 상태로 접근했을 때, settings.LOGIN_URL로 redirect된다고 나와 있다.`
+
+`이 때 LOGIN_URL은 별도의 설정이 없다면 기본값이 '/accounts/login/' 인 것을 확인할 수 있다. `
+
+`즉, accounts와 login 이름은 관용적이기도 하면서 동시에 기본값들로 설정이 되어 있기 때문에 변경하지 않는 것이 좋다.`	
+
+`이는 login함수를 auth_login으로 변경하여 사용하는 이유이기도 하다.`
+
+#### 로그아웃
+
+~~~python
+# accounts/views.py
+from django.contrib.auth import logout as auth_logout
+
+def logout(request):
+    auth_logout(request)
+    return redirect('accounts:login')
+~~~
+
+
+
+#### 회원정보 수정
+
+~~~python
+from .forms import CustomUserChangeForm	# 사전에 forms.py 에서 UserChangeForm을 상속하는 CustomUserChangeForm을 정의해야한다.
+
+def update(request):
+    if request.method == 'POST':
+        form = CustomUserChangeForm(request.POST, instance=request.user) 
+        # Articles의 update.html 과 같이 instance를 인자로 받는다. instance에는 request.user (요청한 유저의 정보)가 담긴다.
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:detail')
+	else:
+        form = CustomUserChangeForm(instance=request.user)
+	context = {
+        'form':form,
+    }
+    return render(request, 'accounts/update.html', context)
+~~~
+
+
+
+#### 비밀번호 변경
+
+~~~python
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST) # 요청한 유저의 정보와 요청된 정보(변경된 비밀번호)를 인자로 받는다.
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user) 
+            # 암호가 변경되면 기존세션과 회원인증정보가 일치하지 않아 로그인 상태가 유지되지 못하므로 재로그인해야함.
+            # 암호를 변경해도 세션을 동일하게 가져가기 위해선 위의 함수를 import해서 사용해야함. 
+            # 요청과 새로운 비밀번호가 적용된 유저정보를 인자로 받음
+            return redirect('accounts:index')
+    else:
+        form = PasswordChangeForm(request.user)
+    context = {
+        'form':form,
+    }
+    return render(request, 'accounts/form.html', context)
+~~~
+
+
+
+#### 회원탈퇴
+
+~~~python
+from django.contrib.auth import logout as auth_logout
+def delete(request):
+    request.user.delete()	# 요청한 유저 객체를 삭제하는 명령어, delete() 는 삭제와 동시에 저장된다.
+    auth_logout(request)	# 삭제 후 로그아웃해야 세션에 삭제된 유저 객체가 남지 않게된다. 삭제명령어와 순서를 꼭 지켜야 한다.
+    return redirect('accounts:login')
+~~~
+
 
 
 #### github-flow 규칙
 
 1. 깃헙의 콜라보레이터에서 협업자들을 추가한다. 협업자들은 함께 작업할 저장소를 클론하여 로컬로 옮긴다.
-2. master(main) 브랜치에서 새로운 브랜치(토픽, topic)를 만들고 변경. - 상세하게 작성한다. git branch accounts, master에서는 절대 개발해선 안된다. 브랜치만들고 거기서 개발해야함 git switch master -> master브랜치로 이동
+
+2. master(main) 브랜치에서 새로운 브랜치(토픽, topic)를 만들고 변경. - 상세하게 작성한다. git branch accounts, master에서는 절대 개발해선 안된다. 브랜치만들고 거기서 개발해야함 
+
+   git switch master -> master브랜치로 이동
+
+   git checkout master -> master브랜치로 이동
+
+   git checkout -b accounts/update -> **accounts/update 브랜치를 만들고 이동**
+
