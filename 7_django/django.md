@@ -1052,6 +1052,150 @@ def delete(request):
 
 
 
+~~~python
+CustomUserCreationForm(request.POST)
+CustomUserChangeForm(request.POST, instance=request.user)
+PasswordChangeForm(request.user, request.POST)
+AuthenticationForm(request, data=request.POST)
+auth_login(request, form.get_user)
+update_session_auth_hash(request, form.user)
+~~~
+
+
+
+#### Image 업로드(사용자)
+
+1. pillow, django-imagekit 모듈 설치
+
+   ~~~bash
+   $ pip install pillow			# 파이썬을 활용해 이미지를 업로드하기 위한 모듈
+   $ pip install django-imagekit	# 이미지의 용량, 사이즈를 조절하여 저장하는 모듈
+   ~~~
+
+2. settings.py 추가
+
+   ~~~python
+   # settings.py
+   # pillow 는 추가할 필요없다.
+   INSTALLED_APP = [
+       'imagekit',
+       ...
+   ]
+   MEDIA_ROOT = BASE_DIR / 'media' 	# 사용자가 업로드 한 파일들을 보관할 디렉토리의 절대 경로 (DB에 이미지를 직접 저장하지 않음)
+   MEDIA_URL = '/media/'				# 업로드 된 파일의 주소(URL)를 만들어 주는 역할
+   ~~~
+
+3. urls.py 추가
+
+   ~~~python
+   # config/urls.py
+   from django.conf.urls.static import static
+   
+   urlpatterns = [
+       path('admin/', admin.site.urls),
+       path('articles/', include('articles.urls')),
+   ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
+   # 사용자가 업로드 한 파일이 우리 프로젝트에 업로드 되지만, 실제로 사용자에게 제공하기 위해서는 업로드 된 파일의 URL이 필요함
+   # 업로드 된 파일의 URL == settings.MEDIA_URL
+   # 위 URL을 통해 참조하는 파일의 실제 위치 == settings.MEDIA_ROOT
+   ~~~
+
+4. models.py 설정
+
+   ~~~python
+   # articles/models.py
+   from imagekit.models import ProcessedImageField
+   from imagekit.processors import ResizeToFill # ResizeToFit
+   class Article(models.Model):
+       title = models.CharField(max_length=20)
+       content = models.TextField()
+       image = ProcessedImageField(
+           blank=True, upload_to='images/', 	
+           # 이미지가 꼭 필요하진 않으므로 blank=True, 사용자에게 받은 이미지가 저장될 경로를 upload_to로 설정
+           processors=[ResizeToFill(400, 300)], 
+           # 이미지 사이즈를 결정, fill은 사이즈에 맞춰 이미지를 자르고, fit은 사이즈에 이미지를 변형하여 넣음
+           format='JPEG', # 저장형식 설정
+           options={'quality':80}) # 이미지의 품질을 설정하여 용량을 조절할 수 있음
+       	# 작성 후 마이그레이션 진행
+   ~~~
+
+5. HTML 설정
+
+   ~~~html
+   <form action="" method="POST" enctype="multipart/form-data"> 
+       <!-- enctype은 파일, 이미지에 대한 인코딩 속성으로, 파일 업로드에 반드시 필요 -->
+       {% csrf_token %}
+       {{ bootstrap_form form }}
+       <input type="submit">
+   </form>
+   ~~~
+
+6. views.py 설정
+
+   ~~~python
+   # views.py
+   def create(request):
+       if request.method == 'POST':
+           form = ArticleForm(request.POST, request.FILES) # 업로드한 파일은 request.FILES 객체로 전달됨
+           ...
+   ~~~
+
+7. 템플릿에서 img 태그 활용
+
+   ~~~html
+   <img src="{{ article.image.url }}" alt="{{ article.image }}"> <!-- article은 context로 넘겨받은 변수로, 바뀔 수 있음 -->
+   <!-- article.image.url == 업로드 파일의 경로 -->
+   <!-- article.image == 업로드 파일의 파일 이름 -->
+   ~~~
+
+
+
+#### Django Messages
+
+1. settings.py 설정
+
+   ~~~python
+   MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+   ~~~
+
+2. views.py 설정
+
+   ~~~python
+   # artilces/views.py
+   from django.contrib import messages # messages를 import
+   
+   def create(request):
+       if request.method == 'POST':
+           form = ArticleForm(request.POST, request.FILES)
+           if form.is_valid():
+               form.save()
+               messages.success(request, '글 작성이 성공적으로 완료되었습니다.')
+               return redirect('articles:index')
+       else:
+           form = ArticleForm()
+       context = {
+           'form': form,
+       }
+       return render(request, 'articles/create.html', context)
+   ~~~
+
+3. HTML 설정
+
+   ~~~html
+   <!-- base.html -->
+   	{% if messages %} <!-- messages가 존재한다면 실행 -->
+         {% for message in messages %} <!-- 반드시 for문을 활용해야 함 -->
+           <div class="alert alert-{{ message.tags }}"> <!-- message.tags 에는 views에서 정의했던 success가 담겨있음 -->
+             {{ message }}	<!-- message 에는 views에서 정의한 텍스트가 담겨있음 -->
+           </div>
+         {% endfor %}
+       {% endif %}
+   ~~~
+
+   
+
+
+
 #### github-flow 규칙
 
 1. 깃헙의 콜라보레이터에서 협업자들을 추가한다. 협업자들은 함께 작업할 저장소를 클론하여 로컬로 옮긴다.
@@ -1064,3 +1208,6 @@ def delete(request):
 
    git checkout -b accounts/update -> **accounts/update 브랜치를 만들고 이동**
 
+
+
+django-widget-tweaks
