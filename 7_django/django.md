@@ -1,4 +1,4 @@
-#### Framework 란?
+####  Framework 란?
 
 다양한 개발에 사용되는 코드 부분들을 재사용할 수 있게 좋은 구조의 코드로 만들어 두고, 그러한 코드들을 모아 놓은 것, 즉 서비스 개발에 필요한 기능들을 미리 구현해서 모아 놓은 것이다.
 
@@ -1075,7 +1075,7 @@ update_session_auth_hash(request, form.user)
 2. settings.py 추가
 
    ~~~python
-   # settings.py
+   # config/settings.py
    # pillow 는 추가할 필요없다.
    INSTALLED_APP = [
        'imagekit',
@@ -1133,7 +1133,7 @@ update_session_auth_hash(request, form.user)
 6. views.py 설정
 
    ~~~python
-   # views.py
+   # articles/views.py
    def create(request):
        if request.method == 'POST':
            form = ArticleForm(request.POST, request.FILES) # 업로드한 파일은 request.FILES 객체로 전달됨
@@ -1194,7 +1194,172 @@ update_session_auth_hash(request, form.user)
 
    
 
+#### 댓글 기능 구현
 
+- ##### **댓글 생성**
+
+    1. 댓글(comment) 모델 선언
+
+       ~~~python
+       # articles/models.py
+
+       class Comment(models.Model):
+           content = models.CharField(max_length=100)
+           created_at = models.DateTimeField(auto_now_add=True)
+           article = models.ForeignKey(Article, on_delete=models.CASCADE)
+           # ForeignKey 필드는 다른 모델의 객체를 가져온다.
+           # 이 때 on_delete 속성은 참조하는 객체가 삭제되었을 때 같이 삭제하는지에 대한 설정이다. CASCADE는 같이 삭제한다.
+           # 작성 후 마이그레이션 진행
+           # 실제로 생성되는 DB에는 article이 아니라 article_id가 생성되지만 comment객체의 article을 검색하면 참조되는 article객체가 출력된다.
+           # 물론 article_id로 article객체의 id값만 출력할 수도 있다.(article.id 도 가능하다.)
+       ~~~
+
+    2. 사용자로부터 댓글 데이터를 입력받기 위한 CommentForm 작성
+
+       ~~~python
+       # articles/forms.py
+       from .models import Article, Comment
+       class CommentForm(forms.ModelForm):
+           class Meta:
+               model = Comment
+               fields = ['content'] # 내용만 입력받을 것이기 때문에
+       ~~~
+
+    3. detail 페이지에서 CommentForm 출력
+
+       ~~~python
+       # articles/views.py
+       from .forms import ArticleForm, CommentForm
+       def detail(request, pk):
+           article = Article.objects.get(pk=pk)
+           comment_form = CommentForm()
+        	context = {
+               'article': article,				# 게시글 구성을 위한 게시글 객체 전달
+               'comment_form': comment_form,	# 댓글작성을 위한 폼 전달
+           }
+           return render(request, 'articles/detail.html', context)
+       ~~~
+
+    4. detail 템플릿에서 CommentForm 출력
+
+       ~~~html
+       {% block content %}
+       ...
+       <form action="{% url 'articles:comments_create' article.pk %}", method='POST'>
+           {% csrf_token %}
+           {{ bootstrap_form comment_form }}
+           <input type="submit">
+       </form>
+       {% endblock %}
+       ~~~
+
+    5. urls.py 에서 댓글 작성을 위한 새로운 url 생성
+    
+       ~~~python
+       # articles/urls.py
+       urlpatterns = [
+           ...,
+           path('<int:pk>/comments/', views.comments_create, name='comments_create'),
+       ]
+       ~~~
+    
+    6. views.py 에서 comments_create 함수 작성
+    
+       ~~~python
+       # articles/views.py
+       def comments_create(request, pk):
+           article = Article.objects.get(pk=pk)
+           comment_form = CommentForm(request.POST)
+           if comment_form.is_valid():
+               comment = comment_form.save(commit=False)	
+               # save 메서드의 commit속성을 활용하여 ((commit=False)는 저장되지않지만 save의 리턴값을 사용할 수 있게 된다.)
+               comment.article = article
+               # 저장 전에 비어있는 comment객체의 article에 위에서 정의했던 article객체를 넣어주고,
+               comment.save()
+               # 완전히 저장한다.
+               # Comment모델은 Article객체를 외래키로 참조하고 있지만, 댓글을 작성한다고 알아서 참조되는 것이 아니기 때문에 위의 과정이 필요함.
+       	return redirect('articles:detail', article.pk)
+       ~~~
+    
+    7. views.py 에서 context에 댓글목록 전달
+    
+       ~~~python
+       # articles/views.py
+       from .forms import ArticleForm, CommentForm
+       def detail(request, pk):
+           article = Article.objects.get(pk=pk)
+           comment_form = CommentForm()
+        	context = {
+               'article': article,
+               'comment_form': comment_form,
+               'comments': article.comment_set.all(),	
+               # article.comment_set.all()은 article객체를 가지고 있는 comment객체들의 집합을 불러오는 역참조 API 이다.
+               # 역참조를 사용하지 않는다면, Comment.objects.filter(article=article) 가 된다.
+               'comments_counts': article.comment_set.count(),
+               # count() API를 활용하여 댓글을 개수를 넘겨줄 수도 있다.
+           }
+           return render(request, 'articles/detail.html', context)
+       ~~~
+    
+    8. detail 템플릿에서 댓글 목록 출력
+    
+       ~~~html
+       {% block content %}
+       <p>
+           {{ comments_counts }}개의 댓글
+       </p>
+       {% for comment in comments %}
+       <p>
+           {{ comment.content }}
+       </p>
+       {% endfor %}
+       {% endblock %}
+       ~~~
+    
+- ##### **댓글 삭제**
+
+    1. urls.py
+
+       ~~~python
+       # articles/urls.py
+       urlpatterns = [
+           ...,
+           path('<int:article_pk>/comments/<int:comment_pk>/delete/', views.comments_delete, name='comments_delete'),
+           # 2개의 pk를 각각 다른 변수명으로 받는다.
+       ]
+       ~~~
+
+    2. views.py
+
+       ~~~python
+       # articles/views.py
+       def comments_delete(request, article_pk, comment_pk): 
+           # article_pk로 리턴값을 통해 돌아갈 detail페이지를 결정하고, comment_pk로 삭제할 comment를 결정한다.
+           if request.method == POST:
+               comment = Comment.objects.get(pk=comment_pk)
+               comment.delete()
+           return redirect('articles:detail' article_pk)
+       ~~~
+
+    3. templates
+
+       ~~~html
+       <!-- detail.html -->
+       {% block content %}
+       {% for comment in comments %}
+       <p>
+           {{ comment.content }} 
+           <form action="{% url 'articles:comments_delete' article.pk comment.pk %}" method="POST">
+               <!-- comments_delete함수에서 활용할 2개의 pk값을 같이 담아서 보내줘야한다. 순서도 꼭 지켜야한다. -->
+               {% csrf_token %}
+               <input type="submit" value="삭제">
+       	</form>
+       </p>
+       {% endfor %}
+       {% endblock %}
+~~~
+       
+       
 
 #### github-flow 규칙
 
@@ -1211,3 +1376,4 @@ update_session_auth_hash(request, form.user)
 
 
 django-widget-tweaks
+
