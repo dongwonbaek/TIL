@@ -1211,7 +1211,7 @@ update_session_auth_hash(request, form.user)
            # 이 때 on_delete 속성은 참조하는 객체가 삭제되었을 때 같이 삭제하는지에 대한 설정이다. CASCADE는 같이 삭제한다.
            # 작성 후 마이그레이션 진행
            # 실제로 생성되는 DB에는 article이 아니라 article_id가 생성되지만 comment객체의 article을 검색하면 참조되는 article객체가 출력된다.
-           # 물론 article_id로 article객체의 id값만 출력할 수도 있다.(article.id 도 가능하다.)
+           # 물론 article_id로 article객체의 id값만 출력할 수도 있다.(article.id 도 가능하다.)	
        ~~~
 
     2. 사용자로부터 댓글 데이터를 입력받기 위한 CommentForm 작성
@@ -1357,9 +1357,53 @@ update_session_auth_hash(request, form.user)
        </p>
        {% endfor %}
        {% endblock %}
-~~~
-       
-       
+       ~~~
+
+
+
+
+### 좋아요(LIKE) 기능 (M : N)
+
+1. 모델 정의
+
+   ~~~python
+   # articles/models.py
+   class Article(models.Model):
+       ...
+   	like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_articles')
+       #
+   ~~~
+
+2. url 추가
+
+   ~~~python
+   # articles/urls.py
+   urlpatterns = [
+       ...,
+       path('<int:pk>/like/', views.like, name='like'),
+   ]
+   ~~~
+
+3. view 함수 추가
+
+   ~~~python
+   # articles/views.py
+   
+   def like(request, pk):
+       review = Review.objects.get(pk=pk)
+       # if request.user not in review.like_users.all():
+       if review.like_users.filter(id=request.user.id).exists():
+           # review객체의 like_users객체에서 id가 요청을 보낸 User객체의 id가 있으면 True, 없으면 False
+           review.like_users.add(request.user)
+           # 있으면,
+       else:
+           review.like_users.remove(request.user)
+       return redirect('reviews:detail', pk)
+   ~~~
+
+   
+
+
 
 #### github-flow 규칙
 
@@ -1375,5 +1419,12 @@ update_session_auth_hash(request, form.user)
 
 
 
-django-widget-tweaks
+Django 파이썬 패키지
 
+- django==3.2.13
+- black
+- django-bootstrap5
+- django-imagekit
+- pillow
+- django-extensions
+- ipython
