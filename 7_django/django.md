@@ -1371,7 +1371,7 @@ update_session_auth_hash(request, form.user)
    class Article(models.Model):
        ...
    	like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_articles')
-       #
+       # 괄호의 첫번째 인자는 M:N 관계를 가질 모델을 넣고, 두번째는 related_name='역참조에사용할 이름' 으로, 첫번째 인자로 넣은 모델을 이미 외래키로 참조하고 있다면, 역참조(..._set)할 때 어떤 객체를 참조할 것인지 알 수 없기 때문에, 역참조에 사용할 이름을 따로 명시한다. 이는 ForeignKey에도 명시하여 사용할 수 있다. 단, related_name을 명시하면, _set 은 사용할 수 없다.
    ~~~
 
 2. url 추가
@@ -1392,16 +1392,83 @@ update_session_auth_hash(request, form.user)
    def like(request, pk):
        review = Review.objects.get(pk=pk)
        # if request.user not in review.like_users.all():
+       # 위 방법도 가능하지만, 밑의 방법이 더 시간을 단축시킬 수 있다.
        if review.like_users.filter(id=request.user.id).exists():
-           # review객체의 like_users객체에서 id가 요청을 보낸 User객체의 id가 있으면 True, 없으면 False
-           review.like_users.add(request.user)
-           # 있으면,
+       # review객체의 like_users객체들에서 id가 요청을 보낸 User객체의 id가 있으면 True, 없으면 False
+   		review.like_users.remove(request.user)
+           # 있으면, 로그인한 유저객체를 삭제한다.
        else:
-           review.like_users.remove(request.user)
+           review.like_users.add(request.user)
+           # 없으면, 로그인한 유저객체를 추가한다.
        return redirect('reviews:detail', pk)
    ~~~
 
    
+
+### Follow 기능
+
+1. url 추가
+
+   ~~~python
+   # accounts/urls.py
+   urlpatterns = [
+   	...,
+       path('<int:pk>/', views.detail, name='detail'),
+       path('<int:pk>/follow/', views.follow, name='follow'),
+   ]
+   ~~~
+
+2. views 함수 추가
+
+   ~~~python
+   # accounts/views.py
+   def detail(request, pk):
+       context = {
+           'user': get_user_model().objects.get(pk=pk)
+       }
+       return render(request, 'accounts/detail.html', context)
+   # 팔로우를 할 수 있는 팔로우 버튼이 개개인의 프로필페이지에 있어야 자연스러움.(detail필요)
+   
+   def follow(request, pk):
+       user = get_user_model().objects.get(pk=pk)
+       # 팔로우할 유저객체를 가져옴
+       if request.user != user:
+   	# 팔로우할 대상이 자기자신이 되면 안되니, 조건문 작성
+           if request.user.followings.filter(id=user.pk).exists():
+           # 요청보낸 유저가 이미 유저객체를 팔로우했을 경우,
+               request.user.followings.remove(user)
+               # 유저객체를 제거함으로써 언팔로우
+           else:
+   		# 팔로우하지 않았을 경우,
+               request.user.followings.add(user)
+               # 유저객체를 추가함으로써 팔로우
+       return redirect('accounts:detail', pk)
+   	# 함수가 종료되면 무조건 유저객체 프로필페이지로 이동
+   ~~~
+
+3. Template 수정
+
+   ~~~html
+   <!-- accounts/detail.html -->
+   {% block content %}
+     <h1>{{ user.username }}
+       님의 정보</h1>
+     {% if request.user != user %}
+     <!-- 자기 자신의 프로필페이지일 때는 팔로우버튼이 보이면 안됨 -->
+   	<a href="{% url 'accounts:follow' user.pk %}">
+         {% if user in request.user.followings.all %}
+           팔로우 취소
+         {% else %}
+           팔로우
+         {% endif %}
+   	</a>
+     {% endif %}
+   {% endblock content %}
+   ~~~
+
+   
+
+
 
 
 
@@ -1428,3 +1495,25 @@ Django 파이썬 패키지
 - pillow
 - django-extensions
 - ipython
+
+
+
+view함수는 http response 객체를 응답한다. 템플릿을 응답하는 것이 아니다.
+
+render : 2xx + html
+
+redirect : 3xx
+
+login_required : 3xx
+
+url을 잘못 적었을 때 (클라이언트 잘못) : 4xx
+
+url에러를 제외한 모든 에러 (서버 잘못) : 5xx
+
+
+
+get_object_or_404(모델, pk=pk) 는 모델.objects.get(pk=pk) 와 같은 방식으로 동작하지만, 존재하지 않는 pk로 접근시에 5xx 에러가 아닌 4xx 에러를 띄워준다.
+
+from django.views.decorators.http import require_POST, require_safe, require_GET
+
+require_POST를 사용하게 되면, login_required 의 next 파라미터는 동작하지 않게 된다.
