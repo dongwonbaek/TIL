@@ -1517,3 +1517,96 @@ get_object_or_404(모델, pk=pk) 는 모델.objects.get(pk=pk) 와 같은 방식
 from django.views.decorators.http import require_POST, require_safe, require_GET
 
 require_POST를 사용하게 되면, login_required 의 next 파라미터는 동작하지 않게 된다.
+
+
+
+## Axios
+
+- 브라우저를 위한 Promise 기반의 클라이언트
+- 기본에 "XHR"이라는 브라우저 내장 객체를 활용해 AJAX요청을 처리하는데, 이보다 편리한 AJAX요청이 가능하도록 도움을 줌
+- Promise 는 비동기 작업을 관리하는 객체로 요청에 성공 또는 실패에 따라 다른 처리를 설정할 수 있음
+- 성공에 대한 약속 .then()
+  - 이전 작업이 성공했을 때 수행할 작업을 나타내는 콜백 함수
+  - 각 콜백함수는 이전 작업의 성공 결과(response)를 인자로 전달받음
+  - 그러므로 성공했을 때의 코드를 콜백함수 안에 작성
+- 실패에 대한 약속 .catch()
+  - .then()이 하나라도 실패하면 동작
+  - 이전 작업의 실패로 인해 생성된 error 객체는 catch 블록 안에서 사용할 수 있음
+
+
+
+#### Axios를 활용한 좋아요 기능의 비동기 처리
+
+1. script영역에 axios CDN 작성
+
+   ~~~html
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+   ~~~
+
+2. script 작성
+
+   ~~~html
+   <body>
+       <button id='like-btn' data-article-id='{{ article.pk }}'>
+         {% if request.user in article.like_users.all %}
+           좋아요 취소
+         {% else %}
+           좋아요
+         {% endif %}
+       </button>
+   </body>
+   <script>
+       const likeBtn = document.querySelector('#like-btn')
+       // 사전에 미리 설정한 id가 like-btn인 태그를 가져와서 likeBtn 변수에 할당
+       likeBtn.addEventListener('click', function (event) {
+   	// 할당한 변수에 'click' 이벤트가 발생할 때 처리할 함수 설정
+         axios({method: 'get', url: `/articles/${event.target.dataset.articleId}/like/`})
+         // axios() 안에는 처리할 방식과 경로를 작성. 
+         // 이때 pk 값을 가져오기위해서는 이벤트를 처리할 태그에 data-article-id 값을 미리 넣어놓고, 
+         // event.target.dataset.articleId 값으로 매칭하여 가져온다. data는 고정이며 article-id 는 articleId로 매칭된다.
+           .then(response => {
+           // 요청에 성공하면 응답받은 객체를 response로 지정하고
+             if (response.data.isLiked === true) {
+           // 응답객체의 isLiked 값을 확인하여 참이면,
+             likeBtn.innerText = '좋아요 취소'
+           // 이미 좋아요를 누른 상태이므로 버튼의 텍스트는 '좋아요 취소',
+          	} else {
+             likeBtn.innerText = '좋아요'
+           // 거짓이면 좋아요를 누르지 않은 상태이므로 '좋아요'를 텍스트로 넣는다.
+           }
+           const likeCount = document.querySelector('#like-count')
+           // 좋아요개수를 표현하기 위해서 id가 like-count인 태그를 가져와서
+           likeCount.innerText = `좋아요 : ${response.data.likeCount}개`
+           // 텍스트 안에 응답객체가 보내온 likeCount 값을 넣어준다. 응답객체는 view함수에서 구성할 수 있다.
+         })
+       })
+   </script>
+   ~~~
+
+3. view 작성
+
+   ~~~python
+   @login_required
+   from django.http import JsonResponse
+   def like(request, pk):
+       article = get_object_or_404(Article, pk=pk)
+       if article.like_users.filter(id=request.user.id).exists():
+           article.like_users.remove(request.user)
+           is_liked = False
+           # 좋아요 기능은 불리언타입으로 표현할 수 있으므로, 불리언 변수 선언
+       else:
+           article.like_users.add(request.user)
+           is_liked = True
+       context = {
+           'isLiked': is_liked,
+           # 불리언 변수값을 키와 매칭하여 딕셔너리에 넣는다.
+           'likeCount': article.like_users.count(),
+           # 좋아요 카운트를 해줄 like_users 필드 개수를 가져와서 매칭하여 딕셔너리에 삽입.
+       }
+       return JsonResponse(context)
+   	# JsonResponse라는 메서드를 활용하여 전달하게 된다. 첫번째 인자는 딕셔너리만을 넣어야 하고, 
+       # 만약 딕셔너리가 아닌 값이 들어와야 할 경우 두번째 인자로 safe=False 를 추가한다. 
+   ~~~
+
+   
+
