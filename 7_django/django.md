@@ -1610,3 +1610,56 @@ require_POST를 사용하게 되면, login_required 의 next 파라미터는 동
 
    
 
+#### Axios 를 활용한 댓글 기능 비동기 처리
+
+1. Axios CDN 작성 후 script 작성
+
+   ~~~html
+     <script>
+       const commentForm = document.querySelector('#comment-form')
+       const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value // csrf 토큰 값을 가져와야 함.
+         commentForm.addEventListener('submit', function (event) {	// 댓글은 제출해야 생성되므로 이벤트는 'submit'이다.
+           event.preventDefault();	// 기존 기능을 막고 비동기 처리로 제출해야 하므로 prventDefault()사용
+           axios({
+             method: 'post', // 요청방식은 post
+             url: `/articles/${event.target.dataset.articleId}/create_comment/`, // 경로 작성
+             headers: {'X-CSRFToken': csrftoken},	// csrf 토큰을 명시해야 함.
+             data: new FormData(commentForm)	// 제출되는 데이터들을 가져옴.
+           })
+             .then(response => {
+             	const comments = document.querySelector('#comments')
+             	comments.replaceChildren() // 먼저 기존에 있던 댓글들을 모두 지움. 이 과정은 다른 유저들에 의해 생성된 댓글들을 같이 가져오기위함
+             	for (comment of response.data.comments) { // 응답 받은 객체를 순회하며 댓글 창을 구성함.
+               const p = document.createElement('p')	// p 태그와 hr 태그를 만들어서,
+               const hr = document.createElement('hr')
+               p.innerText = `${comment[0]} | ${comment[1]}` // p 태그에 응답 배열을 순회하며 뽑아낸 값들을 텍스트로 삽입.
+               comments.append(p, hr)	// 삽입된 텍스트를 댓글 창에 삽입
+               commentForm.reset()	// form은 새롭게 댓글을 받기 위하여 내부 값을 삭제함.
+           	})
+   		})
+     </script>
+   ~~~
+
+2. view 함수 작성
+
+   ~~~python
+   def create_comment(request, pk):
+       article = get_object_or_404(Article, pk=pk)
+       if request.method == "POST":
+           comment_form = CommentForm(request.POST)
+           if comment_form.is_valid():
+               form = comment_form.save(commit=False)
+               form.article = article
+               form.user = request.user
+               form.save()
+               comments = []
+               for a in article.comment_set.all(): # article객체를 가지고 있는 comment객체들을 모두 가져와서 순회한다.
+                   comments.append([a.content, a.user.username, a.user.id]) 
+                   # 빈 리스트에 comment객체에서 뽑아낸 댓글내용, 작성자아이디, 작성자의pk를 하나의 리스트로 묶어서 추가한다.
+               context = {
+                   'comments':comments # 딕셔너리에 키값과 매칭하여 넣고,
+               }
+               return JsonResponse(context) # Json으로 응답한다. 
+   ~~~
+
+   
