@@ -1,17 +1,19 @@
 import sys
-sys.stdin = open('15652.txt')
+sys.stdin = open('15655.txt')
 
 N, M = map(int, input().split())
+list_ = list(map(int, input().split()))
+list_.sort()
 answer = []
 
 def back():
     if len(answer) == M:
         print(*answer)
         return
-    for a in range(1, N + 1):
+    for a in list_:
         switch = True
-        for b in answer:        # 순회는 오름차순 정렬이 되어있기 때문에 
-            if a < b:           # 넣으려는 값이 리스트 내 인스턴스보다 작은지만 검사하여 걸러내면 된다.
+        for b in answer:
+            if a <= b:
                 switch = False
                 break
         if switch == True:
